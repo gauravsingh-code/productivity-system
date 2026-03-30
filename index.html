@@ -1,1 +1,1346 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Cracker · Love Babbar 450</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #080c14;
+  --sidebar:   #0d1220;
+  --surface:   #111827;
+  --card:      #141e30;
+  --border:    #1e2d42;
+  --border2:   #253348;
+  --text:      #e8edf5;
+  --muted:     #4a6080;
+  --muted2:    #6b84a0;
+  --accent:    #3b82f6;
+  --accent2:   #60a5fa;
+  --green:     #22c55e;
+  --green-bg:  #15803d20;
+  --yellow:    #eab308;
+  --red:       #ef4444;
+  --sidebar-w: 280px;
+  --topbar-h:  56px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Outfit', sans-serif;
+  --radius: 10px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ════════════════════════════════
+   TOP BAR
+════════════════════════════════ */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--sidebar);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  flex-shrink: 0;
+  z-index: 100;
+  position: relative;
+}
+
+.topbar-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+
+.brand-badge {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px #3b82f630;
+}
+
+.brand-name {
+  font-size: 16px; font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.brand-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.topbar-search {
+  flex: 1;
+  max-width: 420px;
+  margin-left: auto;
+  position: relative;
+}
+
+.topbar-search svg {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 12px 8px 34px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  background: var(--card);
+}
+
+.search-input::placeholder { color: var(--muted); }
+
+.topbar-right {
+  display: flex; align-items: center; gap: 10px; margin-left: 12px;
+}
+
+.topbar-stat {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap;
+}
+
+.topbar-stat span { color: var(--text); font-weight: 600; }
+
+.hamburger {
+  display: none;
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hamburger:hover { color: var(--text); border-color: var(--accent); }
+
+/* ════════════════════════════════
+   LAYOUT
+════════════════════════════════ */
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ════════════════════════════════
+   SIDEBAR
+════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.28s var(--ease), transform 0.28s var(--ease);
+}
+
+.sidebar.collapsed {
+  width: 64px;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  left: calc(var(--sidebar-w) - 13px);
+  top: calc(var(--topbar-h) + 24px);
+  z-index: 200;
+  width: 26px; height: 26px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--muted2);
+  transition: all 0.28s var(--ease);
+  font-size: 10px;
+}
+
+.sidebar-toggle:hover { color: var(--text); border-color: var(--accent); }
+
+.sidebar.collapsed ~ .sidebar-toggle {
+  left: 51px;
+}
+
+/* Overall Progress in Sidebar */
+.sidebar-progress {
+  padding: 16px 14px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sp-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  transition: opacity 0.2s;
+}
+
+.sidebar.collapsed .sp-label { opacity: 0; }
+
+.sp-track {
+  height: 5px;
+  background: var(--border2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  transition: opacity 0.2s;
+}
+
+.sidebar.collapsed .sp-track { opacity: 0; }
+
+.sp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 999px;
+  transition: width 0.6s var(--ease);
+  min-width: 2px;
+}
+
+.sp-counts {
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted2);
+  transition: opacity 0.2s;
+}
+
+.sidebar.collapsed .sp-counts { opacity: 0; }
+
+.sp-counts .done-c { color: var(--green); font-weight: 600; }
+
+/* Sidebar nav */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.nav-section-label {
+  padding: 8px 16px 4px;
+  font-size: 10px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  transition: opacity 0.2s;
+}
+
+.sidebar.collapsed .nav-section-label { opacity: 0; height: 0; padding: 0; overflow: hidden; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 1px 6px;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+  text-decoration: none;
+  color: var(--muted2);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background: #3b82f620;
+  color: var(--accent2);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+}
+
+.nav-label {
+  font-size: 13.5px;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.15s;
+}
+
+.sidebar.collapsed .nav-label { opacity: 0; width: 0; }
+
+.nav-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+  min-width: 32px;
+  text-align: center;
+}
+
+.sidebar.collapsed .nav-badge { opacity: 0; width: 0; padding: 0; border: none; }
+
+.nav-item.active .nav-badge {
+  background: #3b82f625;
+  border-color: #3b82f640;
+  color: var(--accent2);
+}
+
+/* progress ring in collapsed mode */
+.nav-ring {
+  position: absolute;
+  right: 6px; top: 50%; transform: translateY(-50%);
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sidebar.collapsed .nav-ring { opacity: 1; }
+
+/* ════════════════════════════════
+   MAIN CONTENT
+════════════════════════════════ */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.main::-webkit-scrollbar { width: 6px; }
+.main::-webkit-scrollbar-track { background: var(--bg); }
+.main::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.content-area {
+  padding: 28px 28px 60px;
+  flex: 1;
+}
+
+/* ── Section Header ── */
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sh-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.sh-meta { flex: 1; }
+
+.sh-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  margin-bottom: 4px;
+}
+
+.sh-desc {
+  font-size: 13px;
+  color: var(--muted2);
+  font-family: var(--mono);
+}
+
+.sh-actions {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 4px;
+}
+
+.sh-btn {
+  font-size: 12px;
+  font-family: var(--mono);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.sh-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent2);
+  background: #3b82f610;
+}
+
+.sh-btn.danger:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: #ef444410;
+}
+
+/* ── Topic Progress Bar ── */
+.topic-progress-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tpb-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted2);
+  white-space: nowrap;
+}
+
+.tpb-track {
+  flex: 1;
+  height: 6px;
+  background: var(--border2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tpb-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s var(--ease);
+  min-width: 3px;
+}
+
+.tpb-pct {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 42px;
+  text-align: right;
+}
+
+.tpb-counts {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted2);
+  white-space: nowrap;
+}
+
+/* ── Filter Row ── */
+.filter-row {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filter-chip {
+  font-size: 12.5px;
+  font-family: var(--mono);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.filter-chip:hover { color: var(--text); border-color: var(--border2); }
+
+.filter-chip.active {
+  background: #3b82f622;
+  border-color: #3b82f650;
+  color: var(--accent2);
+}
+
+/* ── Question Table ── */
+.q-table {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.q-table-header {
+  display: grid;
+  grid-template-columns: 44px 40px 1fr 90px 70px;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.q-row {
+  display: grid;
+  grid-template-columns: 44px 40px 1fr 90px 70px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  transition: background 0.12s;
+  animation: rowIn 0.25s var(--ease) both;
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.q-row:last-child { border-bottom: none; }
+.q-row:hover { background: var(--surface); }
+.q-row.done { background: #15803d08; }
+
+/* Checkbox */
+.q-check {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border2);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s var(--ease);
+  flex-shrink: 0;
+}
+
+.q-check:hover { border-color: var(--green); }
+
+.q-check.checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.q-check.checked::after {
+  content: '';
+  width: 5px; height: 8px;
+  border: 2px solid white;
+  border-top: none; border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+  display: block;
+}
+
+/* Number */
+.q-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* Text */
+.q-text {
+  font-size: 13.5px;
+  line-height: 1.45;
+  padding: 0 12px;
+  transition: color 0.2s;
+}
+
+.q-row.done .q-text {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: #4a608080;
+}
+
+/* Difficulty */
+.q-diff {
+  display: flex; justify-content: center;
+}
+
+.diff-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.diff-easy { background: #22c55e18; color: #4ade80; }
+.diff-med  { background: #f5900018; color: #fb923c; }
+.diff-hard { background: #ef444418; color: #f87171; }
+
+/* Link */
+.q-link-cell { display: flex; justify-content: flex-end; }
+
+.q-ext-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border2);
+  text-decoration: none;
+  color: var(--muted2);
+  transition: all 0.18s;
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+
+.q-ext-link.gfg:hover  { border-color: #4ade80; color: #4ade80; background: #22c55e10; }
+.q-ext-link.lc:hover   { border-color: #fbbf24; color: #fbbf24; background: #f59e0b10; }
+.q-ext-link:not(.gfg):not(.lc):hover { border-color: var(--accent); color: var(--accent2); }
+
+/* Empty state */
+.empty-qs {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-qs h4 { font-size: 16px; color: var(--muted2); margin-bottom: 8px; }
+
+/* ════════════════════════════════
+   OVERVIEW / HOME PANEL
+════════════════════════════════ */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.ov-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+
+.ov-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px #00000030;
+  border-color: var(--border2);
+}
+
+.ov-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ov-card:hover::before { opacity: 1; }
+
+.ov-icon { font-size: 22px; margin-bottom: 10px; }
+
+.ov-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ov-bar-track {
+  height: 4px;
+  background: var(--border2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.ov-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s var(--ease);
+  min-width: 2px;
+}
+
+.ov-stat {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted2);
+  display: flex; justify-content: space-between;
+}
+
+.ov-stat .done-n { font-weight: 600; }
+
+/* Big stat cards */
+.big-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.big-stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+
+.big-stat .bs-val {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.big-stat .bs-label {
+  font-size: 12px;
+  color: var(--muted2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.big-stat.total .bs-val { color: var(--accent2); }
+.big-stat.solved .bs-val { color: var(--green); }
+.big-stat.rem .bs-val { color: var(--yellow); }
+
+/* ── Confetti ── */
+.particle {
+  position: fixed; pointer-events: none;
+  z-index: 9999;
+  border-radius: 3px;
+  animation: pFly 0.9s ease-out forwards;
+}
+
+@keyframes pFly {
+  0%   { opacity:1; transform: translate(0,0) scale(1) rotate(0deg); }
+  100% { opacity:0; transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--r)); }
+}
+
+/* ── Save Toast ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--card);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  z-index: 9990;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.toast.show {
+  opacity: 1; transform: translateY(0);
+}
+
+/* ════════════════════════════════
+   MOBILE
+════════════════════════════════ */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 100vw; }
+
+  .sidebar {
+    position: fixed;
+    left: 0; top: var(--topbar-h); bottom: 0;
+    z-index: 300;
+    transform: translateX(-100%);
+    width: 260px !important;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 8px 0 32px #00000060;
+  }
+
+  .sidebar-toggle { display: none; }
+  .hamburger { display: flex; align-items: center; }
+
+  .topbar-stat { display: none; }
+  .topbar-search { max-width: 200px; }
+
+  .content-area { padding: 20px 16px 60px; }
+
+  .q-table-header,
+  .q-row {
+    grid-template-columns: 36px 30px 1fr 60px;
+  }
+
+  .q-diff { display: none; }
+
+  .big-stats { grid-template-columns: 1fr 1fr; }
+  .big-stats .big-stat:last-child { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="hamburger" onclick="toggleMobileSidebar()" aria-label="Menu">
+    <svg width="16" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 16 12">
+      <path d="M0 1h16M0 6h16M0 11h16"/>
+    </svg>
+  </button>
+
+  <a class="topbar-brand" onclick="showOverview()" style="cursor:pointer">
+    <div class="brand-badge">🧠</div>
+    <div>
+      <div class="brand-name">DSA Cracker</div>
+      <div class="brand-sub">Love Babbar · 450</div>
+    </div>
+  </a>
+
+  <div class="topbar-search">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input class="search-input" id="search-input" placeholder="Search questions…" oninput="onSearch(this.value)">
+  </div>
+
+  <div class="topbar-right">
+    <div class="topbar-stat">✅ <span id="tb-done">0</span> / <span id="tb-total">451</span></div>
+    <div class="topbar-stat">🔥 <span id="tb-pct">0%</span></div>
+  </div>
+</div>
+
+<div class="app-body">
+
+  <!-- SIDEBAR TOGGLE BUTTON -->
+  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">◀</button>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-progress">
+      <div class="sp-label">Overall Progress</div>
+      <div class="sp-track"><div class="sp-fill" id="sp-fill" style="width:0%"></div></div>
+      <div class="sp-counts">
+        <span><span class="done-c" id="sp-done">0</span> solved</span>
+        <span id="sp-rem">451</span> left
+      </div>
+    </div>
+
+    <div class="sidebar-nav" id="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" id="nav-home" onclick="showOverview()">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+        <span class="nav-badge" style="color:var(--muted2)">All</span>
+        <span class="nav-ring" style="background:#3b82f6"></span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px">Topics</div>
+      <div id="topic-nav-items"></div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="main-panel">
+    <div class="content-area" id="content-area">
+      <!-- injected by JS -->
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast">💾 Progress saved</div>
+
+<!-- ════════════════════════ SCRIPT ════════════════════════ -->
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const DSA_DATA = {"Array":[{"num":1,"text":"Reverse the array","url":"https://www.geeksforgeeks.org/write-a-program-to-reverse-an-array-or-string/"},{"num":2,"text":"Find the maximum and minimum element in an array","url":"https://www.geeksforgeeks.org/maximum-and-minimum-in-an-array/"},{"num":3,"text":"Find the \"Kth\" max and min element of an array","url":"https://practice.geeksforgeeks.org/problems/kth-smallest-element/0"},{"num":4,"text":"Given an array which consists of only 0, 1 and 2. Sort the array without using any sorting algo","url":"https://practice.geeksforgeeks.org/problems/sort-an-array-of-0s-1s-and-2s/0"},{"num":5,"text":"Move all the negative elements to one side of the array","url":"https://www.geeksforgeeks.org/move-negative-numbers-beginning-positive-end-constant-extra-space/"},{"num":6,"text":"Find the Union and Intersection of the two sorted arrays.","url":"https://practice.geeksforgeeks.org/problems/union-of-two-arrays/0"},{"num":7,"text":"Write a program to cyclically rotate an array by one.","url":"https://practice.geeksforgeeks.org/problems/cyclically-rotate-an-array-by-one/0"},{"num":8,"text":"find Largest sum contiguous Subarray [V. IMP]","url":"https://practice.geeksforgeeks.org/problems/kadanes-algorithm/0"},{"num":9,"text":"Minimise the maximum difference between heights [V.IMP]","url":"https://practice.geeksforgeeks.org/problems/minimize-the-heights3351/1"},{"num":10,"text":"Minimum no. of Jumps to reach end of an array","url":"https://practice.geeksforgeeks.org/problems/minimum-number-of-jumps/0"},{"num":11,"text":"find duplicate in an array of N+1 Integers \uea5e","url":"https://leetcode.com/problems/find-the-duplicate-number/"},{"num":12,"text":"Merge 2 sorted arrays without using Extra space.","url":"https://practice.geeksforgeeks.org/problems/merge-two-sorted-arrays5135/1"},{"num":13,"text":"Kadane's Algo [V.V.V.V.V IMP]","url":"https://practice.geeksforgeeks.org/problems/kadanes-algorithm/0"},{"num":14,"text":"Merge Intervals","url":"https://leetcode.com/problems/merge-intervals/"},{"num":15,"text":"Next Permutation","url":"https://leetcode.com/problems/next-permutation/"},{"num":16,"text":"Count Inversion","url":"https://practice.geeksforgeeks.org/problems/inversion-of-array/0"},{"num":17,"text":"Best time to buy and Sell stock","url":"https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"},{"num":18,"text":"find all pairs on integer array whose sum is equal to given number","url":"https://practice.geeksforgeeks.org/problems/count-pairs-with-given-sum5022/1"},{"num":19,"text":"find common elements In 3 sorted arrays","url":"https://practice.geeksforgeeks.org/problems/common-elements1132/1"},{"num":20,"text":"Rearrange the array in alternating positive and negative items with O(1) extra space","url":"https://www.geeksforgeeks.org/rearrange-array-alternating-positive-negative-items-o1-extra-space/"},{"num":21,"text":"Find if there is any subarray with sum equal to 0","url":"https://practice.geeksforgeeks.org/problems/subarray-with-0-sum/0"},{"num":22,"text":"Find factorial of a large number","url":"https://practice.geeksforgeeks.org/problems/factorials-of-large-numbers/0"},{"num":23,"text":"find maximum product subarray","url":"https://practice.geeksforgeeks.org/problems/maximum-product-subarray3604/1"},{"num":24,"text":"Find longest consecutive subsequence","url":"https://practice.geeksforgeeks.org/problems/longest-consecutive-subsequence/0"},{"num":25,"text":"Given an array of size n and a number k, find all elements that appear more than \" n/k \" times.","url":"https://leetcode.com/problems/majority-element-ii/"},{"num":26,"text":"Maximum profit by buying and selling a share atmost twice","url":"https://www.geeksforgeeks.org/maximum-profit-by-buying-and-selling-a-share-at-most-twice/"},{"num":27,"text":"Find whether an array is a subset of another array \uea5e","url":"https://practice.geeksforgeeks.org/problems/array-subset-of-another-array/0"},{"num":28,"text":"Find the triplet that sum to a given value","url":"https://practice.geeksforgeeks.org/problems/triplet-sum-in-array/0"},{"num":29,"text":"Trapping Rain water problem","url":"https://practice.geeksforgeeks.org/problems/trapping-rain-water-1587115621/1"},{"num":30,"text":"Chocolate Distribution problem","url":"https://practice.geeksforgeeks.org/problems/chocolate-distribution-problem/0"},{"num":31,"text":"Smallest Subarray with sum greater than a given value","url":"https://practice.geeksforgeeks.org/problems/smallest-subarray-with-sum-greater-than-x/0"},{"num":32,"text":"Three way partitioning of an array around a given value","url":"https://practice.geeksforgeeks.org/problems/three-way-partitioning/1"},{"num":33,"text":"Minimum swaps required bring elements less equal K together","url":"https://practice.geeksforgeeks.org/problems/minimum-swaps-required-to-bring-all-elements-less-than-or-equal-to-k-together/0"},{"num":34,"text":"Minimum no. of operations required to make an array palindrome","url":"https://practice.geeksforgeeks.org/problems/palindromic-array/0"},{"num":35,"text":"Median of 2 sorted arrays of equal size","url":"https://practice.geeksforgeeks.org/problems/find-the-median0527/1"},{"num":36,"text":"Median of 2 sorted arrays of different size","url":"https://www.geeksforgeeks.org/median-of-two-sorted-arrays-of-different-sizes/"}],"Backtracking":[{"num":1,"text":"Rat in a maze Problem","url":"https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/1"},{"num":2,"text":"Printing all solutions in N-Queen Problem","url":"https://www.geeksforgeeks.org/printing-solutions-n-queen-problem/"},{"num":3,"text":"Word Break Problem using Backtracking","url":"https://practice.geeksforgeeks.org/problems/word-break-part-2/0"},{"num":4,"text":"Remove Invalid Parentheses","url":"https://leetcode.com/problems/remove-invalid-parentheses/"},{"num":5,"text":"Sudoku Solver","url":"https://practice.geeksforgeeks.org/problems/solve-the-sudoku/0"},{"num":6,"text":"m Coloring Problem","url":"https://practice.geeksforgeeks.org/problems/m-coloring-problem/0"},{"num":7,"text":"Print all palindromic partitions of a string","url":"https://www.geeksforgeeks.org/given-a-string-print-all-possible-palindromic-partition/"},{"num":8,"text":"Subset Sum Problem","url":"https://practice.geeksforgeeks.org/problems/subset-sum-problem2014/1"},{"num":9,"text":"The Knight\u2019s tour problem","url":"https://www.geeksforgeeks.org/the-knights-tour-problem-backtracking-1/"},{"num":10,"text":"Tug of War","url":"https://www.geeksforgeeks.org/tug-of-war/"},{"num":11,"text":"Find shortest safe route in a path with landmines","url":"https://www.geeksforgeeks.org/find-shortest-safe-route-in-a-path-with-landmines/"},{"num":12,"text":"Combinational Sum \uea5e","url":"https://practice.geeksforgeeks.org/problems/combination-sum/0"},{"num":13,"text":"Find Maximum number possible by doing at-most K swaps","url":"https://practice.geeksforgeeks.org/problems/largest-number-in-k-swaps/0"},{"num":14,"text":"Print all permutations of a string","url":"https://practice.geeksforgeeks.org/problems/permutations-of-a-given-string/0"},{"num":15,"text":"Find if there is a path of more than k length from a source","url":"https://www.geeksforgeeks.org/find-if-there-is-a-path-of-more-than-k-length-from-a-source/"},{"num":16,"text":"Longest Possible Route in a Matrix with Hurdles","url":"https://www.geeksforgeeks.org/longest-possible-route-in-a-matrix-with-hurdles/"},{"num":17,"text":"Print all possible paths from top left to bottom right of a mXn matrix","url":"https://www.geeksforgeeks.org/print-all-possible-paths-from-top-left-to-bottom-right-of-a-mxn-matrix/"},{"num":18,"text":"Partition of a set intoK subsets with equal sum","url":"https://practice.geeksforgeeks.org/problems/partition-array-to-k-subsets/1"},{"num":19,"text":"Find the K-th Permutation Sequence of first N natural numbers","url":"https://www.geeksforgeeks.org/find-the-k-th-permutation-sequence-of-first-n-natural-numbers/"},{"num":20,"text":"Implement Stack from Scratch","url":"https://www.tutorialspoint.com/javaexamples/data_stack.htm"},{"num":21,"text":"Implement Queue from Scratch","url":"https://www.geeksforgeeks.org/queue-set-1introduction-and-array-implementation/"},{"num":22,"text":"Implement 2 stack in an array","url":"https://practice.geeksforgeeks.org/problems/implement-two-stacks-in-an-array/1"}],"Binary Tree":[{"num":1,"text":"level order traversal","url":"https://practice.geeksforgeeks.org/problems/level-order-traversal/1"},{"num":2,"text":"Reverse Level Order traversal","url":"https://practice.geeksforgeeks.org/problems/reverse-level-order-traversal/1"},{"num":3,"text":"Height of a tree","url":"https://practice.geeksforgeeks.org/problems/height-of-binary-tree/1"},{"num":4,"text":"Diameter of a tree","url":"https://practice.geeksforgeeks.org/problems/diameter-of-binary-tree/1"},{"num":5,"text":"Mirror of a tree","url":"https://www.geeksforgeeks.org/create-a-mirror-tree-from-the-given-binary-tree/"},{"num":6,"text":"Inorder Traversal of a tree both using recursion and Iteration","url":"https://www.techiedelight.com/inorder-tree-traversal-iterative-recursive/"},{"num":7,"text":"Preorder Traversal of a tree both using recursion and Iteration","url":"https://www.techiedelight.com/preorder-tree-traversal-iterative-recursive/"},{"num":8,"text":"Postorder Traversal of a tree both using recursion and Iteration","url":"https://www.techiedelight.com/postorder-tree-traversal-iterative-recursive/"},{"num":9,"text":"Left View of a tree","url":"https://practice.geeksforgeeks.org/problems/left-view-of-binary-tree/1"},{"num":10,"text":"Right View of Tree","url":"https://practice.geeksforgeeks.org/problems/right-view-of-binary-tree/1"},{"num":11,"text":"Top View of a tree","url":"https://practice.geeksforgeeks.org/problems/top-view-of-binary-tree/1"},{"num":12,"text":"Bottom View of a tree \uea5e","url":"https://practice.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1"},{"num":13,"text":"Zig-Zag traversal of a binary tree","url":"https://practice.geeksforgeeks.org/problems/zigzag-tree-traversal/1"},{"num":14,"text":"Check if a tree is balanced or not","url":"https://practice.geeksforgeeks.org/problems/check-for-balanced-tree/1"},{"num":15,"text":"Diagnol Traversal of a Binary tree","url":"https://www.geeksforgeeks.org/diagonal-traversal-of-binary-tree/"},{"num":16,"text":"Boundary traversal of a Binary tree","url":"https://practice.geeksforgeeks.org/problems/boundary-traversal-of-binary-tree/1"},{"num":17,"text":"Construct Binary Tree from String with Bracket Representation","url":"https://www.geeksforgeeks.org/construct-binary-tree-string-bracket-representation/"},{"num":18,"text":"Convert Binary tree into Doubly Linked List","url":"https://practice.geeksforgeeks.org/problems/binary-tree-to-dll/1"},{"num":19,"text":"Convert Binary tree into Sum tree","url":"https://practice.geeksforgeeks.org/problems/transform-to-sum-tree/1"},{"num":20,"text":"Construct Binary tree from Inorder and preorder traversal","url":"https://practice.geeksforgeeks.org/problems/construct-tree-1/1"},{"num":21,"text":"Find minimum swaps required to convert a Binary tree into BST","url":"https://www.geeksforgeeks.org/minimum-swap-required-convert-binary-tree-binary-search-tree/"},{"num":22,"text":"Check if Binary tree is Sum tree or not","url":"https://practice.geeksforgeeks.org/problems/sum-tree/1"},{"num":23,"text":"Check if all leaf nodes are at same level or not","url":"https://practice.geeksforgeeks.org/problems/leaf-at-same-level/1"},{"num":24,"text":"Check if a Binary Tree contains duplicate subtrees of size 2 or more [ IMP ]","url":"https://practice.geeksforgeeks.org/problems/duplicate-subtree-in-binary-tree/1"},{"num":25,"text":"Check if 2 trees are mirror or not","url":"https://practice.geeksforgeeks.org/problems/check-mirror-in-n-ary-tree/0"},{"num":26,"text":"Sum of Nodes on the Longest path from root to leaf node","url":"https://practice.geeksforgeeks.org/problems/sum-of-the-longest-bloodline-of-a-tree/1"},{"num":27,"text":"Check if given graph is tree or not. [ IMP ]","url":"https://www.geeksforgeeks.org/check-given-graph-tree/"},{"num":28,"text":"Find Largest subtree sum in a tree","url":"https://www.geeksforgeeks.org/find-largest-subtree-sum-tree/"},{"num":29,"text":"Maximum Sum of nodes in Binary tree such that no two are adjacent","url":"https://www.geeksforgeeks.org/maximum-sum-nodes-binary-tree-no-two-adjacent/"},{"num":30,"text":"Print all \"K\" Sum paths in a Binary tree","url":"https://www.geeksforgeeks.org/print-k-sum-paths-binary-tree/"},{"num":31,"text":"Find LCA in a Binary tree","url":"https://practice.geeksforgeeks.org/problems/lowest-common-ancestor-in-a-binary-tree/1"},{"num":32,"text":"Find distance between 2 nodes in a Binary tree","url":"https://practice.geeksforgeeks.org/problems/min-distance-between-two-given-nodes-of-a-binary-tree/1"},{"num":33,"text":"Kth Ancestor of node in a Binary tree","url":"https://www.geeksforgeeks.org/kth-ancestor-node-binary-tree-set-2/"},{"num":34,"text":"Find all Duplicate subtrees in a Binary tree [ IMP ]","url":"https://practice.geeksforgeeks.org/problems/duplicate-subtrees/1"},{"num":35,"text":"Tree Isomorphism Problem","url":"https://practice.geeksforgeeks.org/problems/check-if-tree-is-isomorphic/1"}],"Bitmanipulation":[{"num":1,"text":"Count set bits in an integer","url":"https://practice.geeksforgeeks.org/problems/set-bits0143/1"},{"num":2,"text":"Find the two non-repeating elements in an array of repeating elements","url":"https://practice.geeksforgeeks.org/problems/finding-the-numbers0215/1"},{"num":3,"text":"Count number of bits to be flipped to convert A to B","url":"https://practice.geeksforgeeks.org/problems/bit-difference/0"},{"num":4,"text":"Count total set bits in all numbers from 1 to n","url":"https://practice.geeksforgeeks.org/problems/count-total-set-bits/0"},{"num":5,"text":"Program to find whether a no. is power of two","url":"https://practice.geeksforgeeks.org/problems/power-of-2/0"},{"num":6,"text":"Find position of the only set bit","url":"https://practice.geeksforgeeks.org/problems/find-position-of-set-bit3706/1"},{"num":7,"text":"Copy set bits in a range","url":"https://www.geeksforgeeks.org/copy-set-bits-in-a-range/"},{"num":8,"text":"Divide two integers without using multiplication, division and mod operator","url":"https://www.geeksforgeeks.org/divide-two-integers-without-using-multiplication-division-mod-operator/"},{"num":9,"text":"Calculate square of a number without using *, / and pow()","url":"https://www.geeksforgeeks.org/calculate-square-of-a-number-without-using-and-pow/"},{"num":10,"text":"Power Set","url":"https://practice.geeksforgeeks.org/problems/power-set4302/1"}],"BST":[{"num":1,"text":"Find a value in a BST","url":"https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/"},{"num":2,"text":"Deletion of a node in a BST","url":"https://leetcode.com/problems/delete-node-in-a-bst/"},{"num":3,"text":"Find min and max value in a BST","url":"https://practice.geeksforgeeks.org/problems/minimum-element-in-bst/1"},{"num":4,"text":"Find inorder successor and inorder predecessor in a BST","url":"https://practice.geeksforgeeks.org/problems/predecessor-and-successor/1"},{"num":5,"text":"Check if a tree is a BST or not","url":"https://practice.geeksforgeeks.org/problems/check-for-bst/1"},{"num":6,"text":"Populate Inorder successor of all nodes","url":"https://practice.geeksforgeeks.org/problems/populate-inorder-successor-for-all-nodes/1"},{"num":7,"text":"Find LCA of 2 nodes in a BST","url":"https://practice.geeksforgeeks.org/problems/lowest-common-ancestor-in-a-bst/1"},{"num":8,"text":"Construct BST from preorder traversal","url":"https://www.geeksforgeeks.org/construct-bst-from-given-preorder-traversa/"},{"num":9,"text":"Convert Binary tree into BST","url":"https://practice.geeksforgeeks.org/problems/binary-tree-to-bst/1"},{"num":10,"text":"Convert a normal BST into a Balanced BST","url":"https://www.geeksforgeeks.org/convert-normal-bst-balanced-bst/"},{"num":11,"text":"Merge two BST [ V.V.V>IMP ]","url":"https://www.geeksforgeeks.org/merge-two-balanced-binary-search-trees/"},{"num":12,"text":"Find Kth largest element in a BST \uea5e","url":"https://practice.geeksforgeeks.org/problems/kth-largest-element-in-bst/1"},{"num":13,"text":"Find Kth smallest element in a BST","url":"https://practice.geeksforgeeks.org/problems/find-k-th-smallest-element-in-bst/1"},{"num":14,"text":"Count pairs from 2 BST whose sum is equal to given value \"X\"","url":"https://practice.geeksforgeeks.org/problems/brothers-from-different-root/1"},{"num":15,"text":"Find the median of BST in O(n) time and O(1) space","url":"https://www.geeksforgeeks.org/find-median-bst-time-o1-space/"},{"num":16,"text":"Count BST ndoes that lie in a given range","url":"https://practice.geeksforgeeks.org/problems/count-bst-nodes-that-lie-in-a-given-range/1"},{"num":17,"text":"Replace every element with the least greater element on its right","url":"https://www.geeksforgeeks.org/replace-every-element-with-the-least-greater-element-on-its-right/"},{"num":18,"text":"Given \"n\" appointments, find the conflicting appointments","url":"https://www.geeksforgeeks.org/given-n-appointments-find-conflicting-appointments/"},{"num":19,"text":"Check preorder is valid or not","url":"https://practice.geeksforgeeks.org/problems/preorder-to-postorder/0"},{"num":20,"text":"Check whether BST contains Dead end","url":"https://practice.geeksforgeeks.org/problems/check-whether-bst-contains-dead-end/1"},{"num":21,"text":"Largest BST in a Binary Tree [ V.V.V.V.V IMP ]","url":"https://practice.geeksforgeeks.org/problems/largest-bst/1"},{"num":22,"text":"Flatten BST to sorted list","url":"https://www.geeksforgeeks.org/flatten-bst-to-sorted-list-increasing-order/"}],"Dynamic Programming":[{"num":1,"text":"Coin ChangeProblem","url":"https://practice.geeksforgeeks.org/problems/coin-change2448/1"},{"num":2,"text":"Knapsack Problem","url":"https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem/0"},{"num":3,"text":"Binomial CoefficientProblem","url":"https://practice.geeksforgeeks.org/problems/ncr1019/1"},{"num":4,"text":"Permutation CoefficientProblem","url":"https://www.geeksforgeeks.org/permutation-coefficient/"},{"num":5,"text":"Program for nth Catalan Number","url":"https://www.geeksforgeeks.org/program-nth-catalan-number/"},{"num":6,"text":"Matrix Chain Multiplication","url":"https://www.geeksforgeeks.org/matrix-chain-multiplication-dp-8/"},{"num":7,"text":"Edit Distance","url":"https://practice.geeksforgeeks.org/problems/edit-distance3702/1"},{"num":8,"text":"Subset Sum Problem","url":"https://practice.geeksforgeeks.org/problems/subset-sum-problem2014/1"},{"num":9,"text":"Friends Pairing Problem","url":"https://practice.geeksforgeeks.org/problems/friends-pairing-problem5425/1"},{"num":10,"text":"Gold Mine Problem","url":"https://www.geeksforgeeks.org/gold-mine-problem/"},{"num":11,"text":"Assembly Line SchedulingProblem","url":"https://www.geeksforgeeks.org/assembly-line-scheduling-dp-34/"},{"num":12,"text":"Painting the Fenceproblem","url":"https://practice.geeksforgeeks.org/problems/painting-the-fence3727/1"},{"num":13,"text":"Maximize The Cut Segments","url":"https://practice.geeksforgeeks.org/problems/cutted-segments/0"},{"num":14,"text":"Longest Common Subsequence","url":"https://practice.geeksforgeeks.org/problems/longest-common-subsequence/0"},{"num":15,"text":"Longest Repeated Subsequence","url":"https://practice.geeksforgeeks.org/problems/longest-repeating-subsequence/0"},{"num":16,"text":"Longest Increasing Subsequence","url":"https://practice.geeksforgeeks.org/problems/longest-increasing-subsequence/0"},{"num":17,"text":"Space Optimized Solution of LCS","url":"https://www.geeksforgeeks.org/space-optimized-solution-lcs/"},{"num":18,"text":"LCS (Longest Common Subsequence) of three strings","url":"https://practice.geeksforgeeks.org/problems/lcs-of-three-strings/0"},{"num":19,"text":"Maximum Sum Increasing Subsequence","url":"https://practice.geeksforgeeks.org/problems/maximum-sum-increasing-subsequence4749/1"},{"num":20,"text":"Count all subsequences having product less than K","url":"https://www.geeksforgeeks.org/count-subsequences-product-less-k/"},{"num":21,"text":"Longest subsequence such that difference between adjacent is one","url":"https://practice.geeksforgeeks.org/problems/longest-subsequence-such-that-difference-between-adjacents-is-one4724/1"},{"num":22,"text":"Maximum subsequence sum such that no three are consecutive","url":"https://www.geeksforgeeks.org/maximum-subsequence-sum-such-that-no-three-are-consecutive/"},{"num":23,"text":"Egg Dropping Problem","url":"https://practice.geeksforgeeks.org/problems/egg-dropping-puzzle/0"},{"num":24,"text":"Maximum Length Chain of Pairs","url":"https://practice.geeksforgeeks.org/problems/max-length-chain/1"},{"num":25,"text":"Maximum size square sub-matrix with all 1s","url":"https://practice.geeksforgeeks.org/problems/largest-square-formed-in-a-matrix/0"},{"num":26,"text":"Maximum sum of pairs with specific difference","url":"https://practice.geeksforgeeks.org/problems/pairs-with-specific-difference/0"},{"num":27,"text":"Min Cost PathProblem","url":"https://practice.geeksforgeeks.org/problems/path-in-matrix3805/1"},{"num":28,"text":"Maximum difference of zeros and ones in binary string","url":"https://practice.geeksforgeeks.org/problems/maximum-difference-of-zeros-and-ones-in-binary-string4111/1"},{"num":29,"text":"Minimum number of jumps to reach end","url":"https://practice.geeksforgeeks.org/problems/minimum-number-of-jumps/0"},{"num":30,"text":"Minimum cost to fill given weight in a bag","url":"https://practice.geeksforgeeks.org/problems/minimum-cost-to-fill-given-weight-in-a-bag1956/1"},{"num":31,"text":"Minimum removals from array to make max \u2013min <= K","url":"https://www.geeksforgeeks.org/minimum-removals-array-make-max-min-k/"},{"num":32,"text":"Longest Common Substring","url":"https://practice.geeksforgeeks.org/problems/longest-common-substring/0"},{"num":33,"text":"Count number of ways to reacha given score in a game","url":"https://practice.geeksforgeeks.org/problems/reach-a-given-score/0"},{"num":34,"text":"Count Balanced Binary Trees of Height h","url":"https://practice.geeksforgeeks.org/problems/bbt-counter/0"},{"num":35,"text":"LargestSum Contiguous Subarray [V>V>V>V IMP ]","url":"https://practice.geeksforgeeks.org/problems/kadanes-algorithm/0"},{"num":36,"text":"Smallest sum contiguous subarray","url":"https://www.geeksforgeeks.org/smallest-sum-contiguous-subarray/"},{"num":37,"text":"Unbounded Knapsack (Repetition of items allowed)","url":"https://practice.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1"},{"num":38,"text":"Word Break Problem","url":"https://practice.geeksforgeeks.org/problems/word-break/0"},{"num":39,"text":"Largest Independent Set Problem","url":"https://www.geeksforgeeks.org/largest-independent-set-problem-dp-26/"},{"num":40,"text":"Partition problem","url":"https://practice.geeksforgeeks.org/problems/subset-sum-problem2014/1"},{"num":41,"text":"Longest Palindromic Subsequence","url":"https://www.geeksforgeeks.org/longest-palindromic-subsequence-dp-12/"},{"num":42,"text":"Count All Palindromic Subsequence in a given String","url":"https://practice.geeksforgeeks.org/problems/count-palindromic-subsequences/1"},{"num":43,"text":"Longest Palindromic Substring","url":"https://leetcode.com/problems/longest-palindromic-substring/"},{"num":44,"text":"Longest alternating subsequence","url":"https://practice.geeksforgeeks.org/problems/longest-alternating-subsequence/0"},{"num":45,"text":"Weighted Job Scheduling","url":"https://www.geeksforgeeks.org/weighted-job-scheduling/"},{"num":46,"text":"Coin game winner where every player has three choices","url":"https://www.geeksforgeeks.org/coin-game-winner-every-player-three-choices/"},{"num":47,"text":"Count Derangements (Permutation such that no element appears in its original position) [ IMPORTANT ]","url":"https://www.geeksforgeeks.org/count-derangements-permutation-such-that-no-element-appears-in-its-original-position/"},{"num":48,"text":"Maximum profit by buying and selling a share at most twice [ IMP ]","url":"https://www.geeksforgeeks.org/maximum-profit-by-buying-and-selling-a-share-at-most-twice/"},{"num":49,"text":"Optimal Strategy for a Game","url":"https://practice.geeksforgeeks.org/problems/optimal-strategy-for-a-game/0"},{"num":50,"text":"Optimal Binary Search Tree","url":"https://www.geeksforgeeks.org/optimal-binary-search-tree-dp-24/"},{"num":51,"text":"Palindrome PartitioningProblem","url":"https://practice.geeksforgeeks.org/problems/palindromic-patitioning4845/1"},{"num":52,"text":"Word Wrap Problem","url":"https://practice.geeksforgeeks.org/problems/word-wrap/0"},{"num":53,"text":"Mobile Numeric Keypad Problem [ IMP ]","url":"https://practice.geeksforgeeks.org/problems/mobile-numeric-keypad5456/1"},{"num":54,"text":"Boolean Parenthesization Problem","url":"https://practice.geeksforgeeks.org/problems/boolean-parenthesization/0"},{"num":55,"text":"Largest rectangular sub-matrix whose sum is 0","url":"https://www.geeksforgeeks.org/largest-rectangular-sub-matrix-whose-sum-0/"},{"num":56,"text":"Largest area rectangular sub-matrix with equal number of 1\u2019s and 0\u2019s [ IMP ]","url":"https://www.geeksforgeeks.org/largest-area-rectangular-sub-matrix-equal-number-1s-0s/"},{"num":57,"text":"Maximum sum rectangle in a 2D matrix","url":"https://practice.geeksforgeeks.org/problems/maximum-sum-rectangle/0"},{"num":58,"text":"Maximum profit by buying and selling a share at most k times","url":"https://practice.geeksforgeeks.org/problems/maximum-profit4657/1"},{"num":59,"text":"Find if a string is interleaved of two other strings","url":"https://practice.geeksforgeeks.org/problems/interleaved-strings/1"},{"num":60,"text":"Maximum Length of Pair Chain","url":"https://leetcode.com/problems/maximum-length-of-pair-chain/"}],"Graph":[{"num":1,"text":"Create a Graph, print it","url":"https://1drv.ms/t/s!AqTOHFO77CqEiRua06v1PATyiFg5"},{"num":2,"text":"Implement BFS algorithm","url":"https://practice.geeksforgeeks.org/problems/bfs-traversal-of-graph/1"},{"num":3,"text":"Implement DFS Algo","url":"https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/"},{"num":4,"text":"Detect Cycle in Directed Graph using BFS/DFS Algo","url":"https://www.geeksforgeeks.org/detect-cycle-in-a-graph/"},{"num":5,"text":"Detect Cycle in UnDirected Graph using BFS/DFS Algo","url":"https://practice.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1"},{"num":6,"text":"Search in a Maze","url":"https://practice.geeksforgeeks.org/problems/rat-in-a-maze-problem/1"},{"num":7,"text":"Minimum Step by Knight","url":"https://practice.geeksforgeeks.org/problems/steps-by-knight/0"},{"num":8,"text":"flood fill algo","url":"https://leetcode.com/problems/flood-fill/"},{"num":9,"text":"Clone a graph","url":"https://leetcode.com/problems/clone-graph/"},{"num":10,"text":"Making wired Connections","url":"https://leetcode.com/problems/number-of-operations-to-make-network-connected/"},{"num":11,"text":"word Ladder","url":"https://leetcode.com/problems/word-ladder/"},{"num":12,"text":"Dijkstra algo","url":"https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/"},{"num":13,"text":"Implement Topological Sort \uea5e","url":"https://practice.geeksforgeeks.org/problems/topological-sort/1"},{"num":14,"text":"Minimum time taken by each job to be completed given by a Directed Acyclic Graph","url":"https://www.geeksforgeeks.org/minimum-time-taken-by-each-job-to-be-completed-given-by-a-directed-acyclic-graph/"},{"num":15,"text":"Find whether it is possible to finish all tasks or not from given dependencies","url":"https://www.geeksforgeeks.org/find-whether-it-is-possible-to-finish-all-tasks-or-not-from-given-dependencies/"},{"num":16,"text":"Find the no. of Isalnds","url":"https://practice.geeksforgeeks.org/problems/find-the-number-of-islands/1"},{"num":17,"text":"Given a sorted Dictionary of an Alien Language, find order of characters","url":"https://practice.geeksforgeeks.org/problems/alien-dictionary/1"},{"num":18,"text":"Implement Kruksal\u2019sAlgorithm","url":"https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/"},{"num":19,"text":"Implement Prim\u2019s Algorithm","url":"https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/"},{"num":20,"text":"Total no. of Spanning tree in a graph","url":"https://www.geeksforgeeks.org/total-number-spanning-trees-graph/"},{"num":21,"text":"Implement Bellman Ford Algorithm","url":"https://practice.geeksforgeeks.org/problems/negative-weight-cycle/0"},{"num":22,"text":"Implement Floyd warshallAlgorithm","url":"https://practice.geeksforgeeks.org/problems/implementing-floyd-warshall/0"},{"num":23,"text":"Travelling Salesman Problem","url":"https://www.geeksforgeeks.org/travelling-salesman-problem-set-1/"},{"num":24,"text":"Graph ColouringProblem","url":"https://www.geeksforgeeks.org/graph-coloring-applications/"},{"num":25,"text":"Snake and Ladders Problem","url":"https://leetcode.com/problems/snakes-and-ladders/"},{"num":26,"text":"Find bridge in a graph","url":"https://www.geeksforgeeks.org/bridge-in-a-graph/"},{"num":27,"text":"Count Strongly connected Components(Kosaraju Algo)","url":"https://practice.geeksforgeeks.org/problems/strongly-connected-components-kosarajus-algo/1"},{"num":28,"text":"Check whether a graph is Bipartite or Not","url":"https://www.geeksforgeeks.org/bipartite-graph/"},{"num":29,"text":"Detect Negative cycle in a graph \uea5e","url":"https://www.geeksforgeeks.org/detect-negative-cycle-graph-bellman-ford/"},{"num":30,"text":"Longest path in a Directed Acyclic Graph","url":"https://www.geeksforgeeks.org/find-longest-path-directed-acyclic-graph/"},{"num":31,"text":"Journey to the Moon","url":"https://www.hackerrank.com/challenges/journey-to-the-moon/problem"},{"num":32,"text":"Cheapest Flights Within K Stops","url":"https://leetcode.com/problems/cheapest-flights-within-k-stops/description/"},{"num":33,"text":"Oliver and the Game","url":"https://www.hackerearth.com/practice/algorithms/graphs/topological-sort/practice-problems/algorithm/oliver-and-the-game-3/"},{"num":34,"text":"Water Jug problem using BFS","url":"https://www.geeksforgeeks.org/water-jug-problem-using-bfs/"},{"num":35,"text":"Water Jug problem using BFS","url":"https://www.geeksforgeeks.org/water-jug-problem-using-bfs/"},{"num":36,"text":"Find if there is a path of more thank length from a source","url":"https://www.geeksforgeeks.org/find-if-there-is-a-path-of-more-than-k-length-from-a-source/"},{"num":37,"text":"M-ColouringProblem","url":"https://practice.geeksforgeeks.org/problems/m-coloring-problem/0"},{"num":38,"text":"Minimum edges to reverse o make path from source to destination","url":"https://www.geeksforgeeks.org/minimum-edges-reverse-make-path-source-destination/"},{"num":39,"text":"Paths to travel each nodes using each edge(Seven Bridges)","url":"https://www.geeksforgeeks.org/paths-travel-nodes-using-edgeseven-bridges-konigsberg/"},{"num":40,"text":"Vertex Cover Problem","url":"https://www.geeksforgeeks.org/vertex-cover-problem-set-1-introduction-approximate-algorithm-2/"},{"num":41,"text":"Chinese Postman or Route Inspection","url":"https://www.geeksforgeeks.org/chinese-postman-route-inspection-set-1-introduction/"},{"num":42,"text":"Number of Triangles in a Directed and Undirected Graph","url":"https://www.geeksforgeeks.org/number-of-triangles-in-directed-and-undirected-graphs/"},{"num":43,"text":"Minimise the cashflow among a given set of friends who have borrowed money from each other","url":"https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/"},{"num":44,"text":"Two Clique Problem","url":"https://www.geeksforgeeks.org/two-clique-problem-check-graph-can-divided-two-cliques/"}],"Greedy":[{"num":1,"text":"Activity Selection Problem","url":"https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room/0"},{"num":2,"text":"Job SequencingProblem","url":"https://practice.geeksforgeeks.org/problems/job-sequencing-problem/0"},{"num":3,"text":"Huffman Coding","url":"https://practice.geeksforgeeks.org/problems/huffman-encoding/0"},{"num":4,"text":"Water Connection Problem","url":"https://practice.geeksforgeeks.org/problems/water-connection-problem/0"},{"num":5,"text":"Fractional Knapsack Problem","url":"https://practice.geeksforgeeks.org/problems/fractional-knapsack/0"},{"num":6,"text":"Greedy Algorithm to find Minimum number of Coins","url":"https://practice.geeksforgeeks.org/problems/coin-piles/0"},{"num":7,"text":"Maximum trains for which stoppage can be provided","url":"https://www.geeksforgeeks.org/maximum-trains-stoppage-can-provided/"},{"num":8,"text":"Minimum Platforms Problem","url":"https://practice.geeksforgeeks.org/problems/minimum-platforms/0"},{"num":9,"text":"Buy Maximum Stocks if i stocks can be bought on i-th day","url":"https://www.geeksforgeeks.org/buy-maximum-stocks-stocks-can-bought-th-day/"},{"num":10,"text":"Find the minimum and maximum amount to buy all N candies","url":"https://practice.geeksforgeeks.org/problems/shop-in-candy-store/0"},{"num":11,"text":"Minimize Cash Flow among a given set of friends who have borrowed money from each other \uea5e","url":"https://www.geeksforgeeks.org/minimize-cash-flow-among-given-set-friends-borrowed-money/"},{"num":12,"text":"Minimum Cost to cut a board into squares","url":"https://www.geeksforgeeks.org/minimum-cost-cut-board-squares/"},{"num":13,"text":"Check if it is possible to survive on Island","url":"https://www.geeksforgeeks.org/survival/"},{"num":14,"text":"Find maximum meetings in one room","url":"https://www.geeksforgeeks.org/find-maximum-meetings-in-one-room/"},{"num":15,"text":"Maximum product subset of an array","url":"https://www.geeksforgeeks.org/maximum-product-subset-array/"},{"num":16,"text":"Maximize array sum after K negations","url":"https://practice.geeksforgeeks.org/problems/maximize-sum-after-k-negations/0"},{"num":17,"text":"Maximize the sum of arr[i]*i","url":"https://practice.geeksforgeeks.org/problems/maximize-arrii-of-an-array/0"},{"num":18,"text":"Maximum sum of absolute difference of an array","url":"https://www.geeksforgeeks.org/maximum-sum-absolute-difference-array/"},{"num":19,"text":"Maximize sum of consecutive differences in a circular array","url":"https://practice.geeksforgeeks.org/problems/swap-and-maximize/0"},{"num":20,"text":"Minimum sum of absolute difference of pairs of two arrays","url":"https://www.geeksforgeeks.org/minimum-sum-absolute-difference-pairs-two-arrays/"},{"num":21,"text":"Program for Shortest Job First (or SJF) CPU Scheduling","url":"https://www.geeksforgeeks.org/program-for-shortest-job-first-or-sjf-cpu-scheduling-set-1-non-preemptive/"},{"num":22,"text":"Program for Least Recently Used (LRU) Page Replacement algorithm","url":"https://practice.geeksforgeeks.org/problems/page-faults-in-lru/0"},{"num":23,"text":"Smallest subset with sum greater than all other elements","url":"https://www.geeksforgeeks.org/smallest-subset-sum-greater-elements/"},{"num":24,"text":"Chocolate Distribution Problem","url":"https://practice.geeksforgeeks.org/problems/chocolate-distribution-problem/0"},{"num":25,"text":"DEFKIN -Defense of a Kingdom","url":"https://www.spoj.com/problems/DEFKIN/"},{"num":26,"text":"DIEHARD -DIE HARD","url":"https://www.spoj.com/problems/DIEHARD/"},{"num":27,"text":"GERGOVIA -Wine trading in Gergovia","url":"https://www.spoj.com/problems/GERGOVIA/"},{"num":28,"text":"Picking Up Chicks \uea5e","url":"https://www.spoj.com/problems/GCJ101BB/"},{"num":29,"text":"CHOCOLA \u2013Chocolate","url":"https://www.spoj.com/problems/CHOCOLA/"},{"num":30,"text":"ARRANGE -Arranging Amplifiers","url":"https://www.spoj.com/problems/ARRANGE/"},{"num":31,"text":"K Centers Problem","url":"https://www.geeksforgeeks.org/k-centers-problem-set-1-greedy-approximate-algorithm/"},{"num":32,"text":"Minimum Cost of ropes","url":"https://practice.geeksforgeeks.org/problems/minimum-cost-of-ropes/0"},{"num":33,"text":"Find smallest number with given number of digits and sum of digits","url":"https://practice.geeksforgeeks.org/problems/smallest-number5829/1"},{"num":34,"text":"Rearrange characters in a string such that no two adjacent are same","url":"https://practice.geeksforgeeks.org/problems/rearrange-characters/0"},{"num":35,"text":"Find maximum sum possible equal sum of three stacks","url":"https://www.geeksforgeeks.org/find-maximum-sum-possible-equal-sum-three-stacks/"}],"Heap":[{"num":1,"text":"Implement a Maxheap/MinHeap using arrays and recursion.","url":"https://www.geeksforgeeks.org/building-heap-from-array/"},{"num":2,"text":"Sort an Array using heap. (HeapSort)","url":"https://www.geeksforgeeks.org/heap-sort/"},{"num":3,"text":"Maximum of all subarrays of size k.","url":"https://www.geeksforgeeks.org/sliding-window-maximum-maximum-of-all-subarrays-of-size-k/"},{"num":4,"text":"\u201ck\u201d largest element in an array","url":"https://practice.geeksforgeeks.org/problems/k-largest-elements4206/1"},{"num":5,"text":"Kth smallest and largest element in an unsorted array","url":"https://www.geeksforgeeks.org/kth-smallestlargest-element-unsorted-array/"},{"num":6,"text":"Merge \u201cK\u201d sorted arrays. [ IMP ]","url":"https://practice.geeksforgeeks.org/problems/merge-k-sorted-arrays/1"},{"num":7,"text":"Merge 2 Binary Max Heaps","url":"https://practice.geeksforgeeks.org/problems/merge-two-binary-max-heap/0"},{"num":8,"text":"Kth largest sum continuous subarrays","url":"https://www.geeksforgeeks.org/k-th-largest-sum-contiguous-subarray/"},{"num":9,"text":"Leetcode- reorganize strings","url":"https://leetcode.com/problems/reorganize-string/"},{"num":10,"text":"Merge \u201cK\u201d Sorted Linked Lists [V.IMP]","url":"https://practice.geeksforgeeks.org/problems/merge-k-sorted-linked-lists/1"},{"num":11,"text":"Smallest range in \u201cK\u201d Lists","url":"https://practice.geeksforgeeks.org/problems/find-smallest-range-containing-elements-from-k-lists/1"},{"num":12,"text":"Median in a stream of Integers","url":"https://practice.geeksforgeeks.org/problems/find-median-in-a-stream/0"},{"num":13,"text":"Check if a Binary Tree is Heap","url":"https://practice.geeksforgeeks.org/problems/is-binary-tree-heap/1"},{"num":14,"text":"Connect \u201cn\u201d ropes with minimum cost","url":"https://practice.geeksforgeeks.org/problems/minimum-cost-of-ropes/0"},{"num":15,"text":"Convert BST to Min Heap","url":"https://www.geeksforgeeks.org/convert-bst-min-heap/"},{"num":16,"text":"Convert min heap to max heap","url":"https://www.geeksforgeeks.org/convert-min-heap-to-max-heap/"},{"num":17,"text":"Rearrange characters in a string such that no two adjacent are same.","url":"https://practice.geeksforgeeks.org/problems/rearrange-characters/0"},{"num":18,"text":"Minimum sum of two numbers formed from digits of an array","url":"https://practice.geeksforgeeks.org/problems/minimum-sum4058/1"}],"Linked List":[{"num":1,"text":"Write a Program to reverse the Linked List. (Both Iterative and recursive)","url":"https://www.geeksforgeeks.org/reverse-a-linked-list/"},{"num":2,"text":"Reverse a Linked List in group of Given Size. [Very Imp]","url":"https://practice.geeksforgeeks.org/problems/reverse-a-linked-list-in-groups-of-given-size/1"},{"num":3,"text":"Write a program to Detect loop in a linked list.","url":"https://practice.geeksforgeeks.org/problems/detect-loop-in-linked-list/1"},{"num":4,"text":"Write a program to Delete loop in a linked list.","url":"https://practice.geeksforgeeks.org/problems/remove-loop-in-linked-list/1"},{"num":5,"text":"Find the starting point of the loop.","url":"https://www.geeksforgeeks.org/find-first-node-of-loop-in-a-linked-list/"},{"num":6,"text":"Remove Duplicates in a sorted Linked List.","url":"https://practice.geeksforgeeks.org/problems/remove-duplicate-element-from-sorted-linked-list/1"},{"num":7,"text":"Remove Duplicates in a Un-sorted Linked List.","url":"https://practice.geeksforgeeks.org/problems/remove-duplicates-from-an-unsorted-linked-list/1"},{"num":8,"text":"Write a Program to Move the last element to Front in a Linked List.","url":"https://www.geeksforgeeks.org/move-last-element-to-front-of-a-given-linked-list/"},{"num":9,"text":"Add \u201c1\u201d to a number represented as a Linked List.","url":"https://practice.geeksforgeeks.org/problems/add-1-to-a-number-represented-as-linked-list/1"},{"num":10,"text":"Add two numbers represented by linked lists. \uea5e","url":"https://practice.geeksforgeeks.org/problems/add-two-numbers-represented-by-linked-lists/1"},{"num":11,"text":"Intersection of two Sorted Linked List.","url":"https://practice.geeksforgeeks.org/problems/intersection-of-two-sorted-linked-lists/1"},{"num":12,"text":"Intersection Point of two Linked Lists.","url":"https://practice.geeksforgeeks.org/problems/intersection-point-in-y-shapped-linked-lists/1"},{"num":13,"text":"Merge Sort For Linked lists.[Very Important]","url":"https://practice.geeksforgeeks.org/problems/sort-a-linked-list/1"},{"num":14,"text":"Quicksort for Linked Lists.[Very Important]","url":"https://practice.geeksforgeeks.org/problems/quick-sort-on-linked-list/1"},{"num":15,"text":"Find the middle Element of a linked list.","url":"https://leetcode.com/problems/middle-of-the-linked-list/"},{"num":16,"text":"Check if a linked list is a circular linked list.","url":"https://practice.geeksforgeeks.org/problems/circular-linked-list/1"},{"num":17,"text":"Split a Circular linked list into two halves.","url":"https://practice.geeksforgeeks.org/problems/split-a-circular-linked-list-into-two-halves/1"},{"num":18,"text":"Write a Program to check whether the Singly Linked list is a palindrome or not.","url":"https://practice.geeksforgeeks.org/problems/check-if-linked-list-is-pallindrome/1"},{"num":19,"text":"Deletion from a Circular Linked List.","url":"https://www.geeksforgeeks.org/deletion-circular-linked-list/"},{"num":20,"text":"Reverse a Doubly Linked list.","url":"https://practice.geeksforgeeks.org/problems/reverse-a-doubly-linked-list/1"},{"num":21,"text":"Find pairs with a given sum in a DLL.","url":"https://www.geeksforgeeks.org/find-pairs-given-sum-doubly-linked-list/"},{"num":22,"text":"Count triplets in a sorted DLL whose sum is equal to given value \u201cX\u201d.","url":"https://www.geeksforgeeks.org/count-triplets-sorted-doubly-linked-list-whose-sum-equal-given-value-x/"},{"num":23,"text":"Sort a \u201ck\u201dsorted Doubly Linked list.[Very IMP]","url":"https://www.geeksforgeeks.org/sort-k-sorted-doubly-linked-list/"},{"num":24,"text":"Rotate DoublyLinked list by N nodes.","url":"https://www.geeksforgeeks.org/rotate-doubly-linked-list-n-nodes/"},{"num":25,"text":"Rotate a Doubly Linked list in group of Given Size.[Very IMP]","url":"https://www.geeksforgeeks.org/reverse-doubly-linked-list-groups-given-size/"},{"num":26,"text":"Can we reverse a linked list in less than O(n) ? (<->)","url":"https://dsacracker.herokuapp.com/%3C-%3E"},{"num":27,"text":"Why Quicksort is preferred for. Arrays and Merge Sort for LinkedLists ? (<->)","url":"https://dsacracker.herokuapp.com/%3C-%3E"},{"num":28,"text":"Flatten a Linked List","url":"https://practice.geeksforgeeks.org/problems/flattening-a-linked-list/1"},{"num":29,"text":"Sort a LL of 0's, 1's and 2's","url":"https://practice.geeksforgeeks.org/problems/given-a-linked-list-of-0s-1s-and-2s-sort-it/1"},{"num":30,"text":"Clone a linked list with next and random pointer","url":"https://practice.geeksforgeeks.org/problems/clone-a-linked-list-with-next-and-random-pointer/1"},{"num":31,"text":"Merge K sorted Linked list","url":"https://practice.geeksforgeeks.org/problems/merge-k-sorted-linked-lists/1"},{"num":32,"text":"Multiply 2 no. represented by LL","url":"https://practice.geeksforgeeks.org/problems/multiply-two-linked-lists/1"},{"num":33,"text":"Delete nodes which have a greater value on right side","url":"https://practice.geeksforgeeks.org/problems/delete-nodes-having-greater-value-on-right/1"},{"num":34,"text":"Segregate even and odd nodes in a Linked List","url":"https://practice.geeksforgeeks.org/problems/segregate-even-and-odd-nodes-in-a-linked-list/0"},{"num":35,"text":"Program for n\u2019th node from the end of a Linked List","url":"https://practice.geeksforgeeks.org/problems/nth-node-from-end-of-linked-list/1"},{"num":36,"text":"Find the first non-repeating character from a stream of characters","url":"https://practice.geeksforgeeks.org/problems/first-non-repeating-character-in-a-stream/0"}],"Matrix":[{"num":1,"text":"Spiral traversal on a Matrix","url":"https://practice.geeksforgeeks.org/problems/spirally-traversing-a-matrix/0"},{"num":2,"text":"Search an element in a matrix","url":"https://leetcode.com/problems/search-a-2d-matrix/"},{"num":3,"text":"Find median in a row wise sorted matrix","url":"https://practice.geeksforgeeks.org/problems/median-in-a-row-wise-sorted-matrix1527/1"},{"num":4,"text":"Find row with maximum no. of 1's","url":"https://practice.geeksforgeeks.org/problems/row-with-max-1s0023/1"},{"num":5,"text":"Print elements in sorted order using row-column wise sorted matrix","url":"https://practice.geeksforgeeks.org/problems/sorted-matrix/0"},{"num":6,"text":"Maximum size rectangle","url":"https://practice.geeksforgeeks.org/problems/max-rectangle/1"},{"num":7,"text":"Find a specific pair in matrix","url":"https://www.geeksforgeeks.org/find-a-specific-pair-in-matrix/"},{"num":8,"text":"Rotate matrix by 90 degrees","url":"https://www.geeksforgeeks.org/rotate-a-matrix-by-90-degree-in-clockwise-direction-without-using-any-extra-space/"},{"num":9,"text":"Kth smallest element in a row-cpumn wise sorted matrix","url":"https://practice.geeksforgeeks.org/problems/kth-element-in-matrix/1"},{"num":10,"text":"Common elements in all rows of a given matrix","url":"https://www.geeksforgeeks.org/common-elements-in-all-rows-of-a-given-matrix/"}],"Search & Sort":[{"num":1,"text":"Find first and last positions of an element in a sorted array","url":"https://practice.geeksforgeeks.org/problems/first-and-last-occurrences-of-x/0"},{"num":2,"text":"Find a Fixed Point (Value equal to index) in a given array","url":"https://practice.geeksforgeeks.org/problems/value-equal-to-index-value1330/1"},{"num":3,"text":"Search in a rotated sorted array","url":"https://leetcode.com/problems/search-in-rotated-sorted-array/"},{"num":4,"text":"square root of an integer","url":"https://practice.geeksforgeeks.org/problems/count-squares3649/1"},{"num":5,"text":"Maximum and minimum of an array using minimum number of comparisons","url":"https://practice.geeksforgeeks.org/problems/middle-of-three2926/1"},{"num":6,"text":"Optimum location of point to minimize total distance","url":"https://www.geeksforgeeks.org/optimum-location-point-minimize-total-distance/"},{"num":7,"text":"Find the repeating and the missing","url":"https://practice.geeksforgeeks.org/problems/find-missing-and-repeating2512/1"},{"num":8,"text":"find majority element","url":"https://practice.geeksforgeeks.org/problems/majority-element/0"},{"num":9,"text":"Searching in an array where adjacent differ by at most k","url":"https://www.geeksforgeeks.org/searching-array-adjacent-differ-k/"},{"num":10,"text":"find a pair with a given difference","url":"https://practice.geeksforgeeks.org/problems/find-pair-given-difference/0"},{"num":11,"text":"find four elements that sum to a given value","url":"https://practice.geeksforgeeks.org/problems/find-all-four-sum-numbers/0"},{"num":12,"text":"maximum sum such that no 2 elements are adjacent \uea5e","url":"https://practice.geeksforgeeks.org/problems/stickler-theif/0"},{"num":13,"text":"Count triplet with sum smaller than a given value","url":"https://practice.geeksforgeeks.org/problems/count-triplets-with-sum-smaller-than-x5549/1"},{"num":14,"text":"merge 2 sorted arrays","url":"https://practice.geeksforgeeks.org/problems/merge-two-sorted-arrays5135/1"},{"num":15,"text":"print all subarrays with 0 sum","url":"https://practice.geeksforgeeks.org/problems/zero-sum-subarrays/0"},{"num":16,"text":"Product array Puzzle","url":"https://practice.geeksforgeeks.org/problems/product-array-puzzle/0"},{"num":17,"text":"Sort array according to count of set bits","url":"https://practice.geeksforgeeks.org/problems/sort-by-set-bit-count/0"},{"num":18,"text":"minimum no. of swaps required to sort the array","url":"https://practice.geeksforgeeks.org/problems/minimum-swaps/1"},{"num":19,"text":"Bishu and Soldiers","url":"https://www.hackerearth.com/practice/algorithms/searching/binary-search/practice-problems/algorithm/bishu-and-soldiers/"},{"num":20,"text":"Rasta and Kheshtak","url":"https://www.hackerearth.com/practice/algorithms/searching/binary-search/practice-problems/algorithm/rasta-and-kheshtak/"},{"num":21,"text":"Kth smallest number again","url":"https://www.hackerearth.com/practice/algorithms/searching/binary-search/practice-problems/algorithm/kth-smallest-number-again-2/"},{"num":22,"text":"Find pivot element in a sorted array","url":"http://theoryofprogramming.com/2017/12/16/find-pivot-element-sorted-rotated-array/"},{"num":23,"text":"K-th Element of Two Sorted Arrays","url":"https://practice.geeksforgeeks.org/problems/k-th-element-of-two-sorted-array/0"},{"num":24,"text":"Aggressive cows","url":"https://www.spoj.com/problems/AGGRCOW/"},{"num":25,"text":"Book Allocation Problem","url":"https://practice.geeksforgeeks.org/problems/allocate-minimum-number-of-pages/0"},{"num":26,"text":"EKOSPOJ:","url":"https://www.spoj.com/problems/EKO/"},{"num":27,"text":"Job Scheduling Algo","url":"https://www.geeksforgeeks.org/weighted-job-scheduling-log-n-time/"},{"num":28,"text":"Missing Number in AP","url":"https://practice.geeksforgeeks.org/problems/arithmetic-number/0"},{"num":29,"text":"Smallest number with atleastn trailing zeroes infactorial","url":"https://practice.geeksforgeeks.org/problems/smallest-factorial-number5929/1"},{"num":30,"text":"Painters Partition Problem:","url":"https://practice.geeksforgeeks.org/problems/allocate-minimum-number-of-pages/0"},{"num":31,"text":"ROTI-Prata SPOJ","url":"https://www.spoj.com/problems/PRATA/"},{"num":32,"text":"DoubleHelix SPOJ","url":"https://www.spoj.com/problems/ANARC05B/"},{"num":33,"text":"Subset Sums","url":"https://www.spoj.com/problems/SUBSUMS/"},{"num":34,"text":"Find the inversion count","url":"https://practice.geeksforgeeks.org/problems/inversion-of-array/0"},{"num":35,"text":"Implement Merge-sort in-place","url":"https://www.geeksforgeeks.org/in-place-merge-sort/"},{"num":36,"text":"Partitioning and Sorting Arrays with Many Repeated Entries","url":"https://www.baeldung.com/java-sorting-arrays-with-repeated-entries"}],"Stacks & Queue":[{"num":1,"text":"Implement Stack from Scratch","url":"https://www.tutorialspoint.com/javaexamples/data_stack.htm"},{"num":2,"text":"Implement Queue from Scratch","url":"https://www.geeksforgeeks.org/queue-set-1introduction-and-array-implementation/"},{"num":3,"text":"Implement 2 stack in an array","url":"https://practice.geeksforgeeks.org/problems/implement-two-stacks-in-an-array/1"},{"num":4,"text":"find the middle element of a stack","url":"https://www.geeksforgeeks.org/design-a-stack-with-find-middle-operation/"},{"num":5,"text":"Implement \"N\" stacks in an Array","url":"https://www.geeksforgeeks.org/efficiently-implement-k-stacks-single-array/"},{"num":6,"text":"Check the expression has valid or Balanced parenthesis or not.","url":"https://practice.geeksforgeeks.org/problems/parenthesis-checker/0"},{"num":7,"text":"Reverse a String using Stack","url":"https://practice.geeksforgeeks.org/problems/reverse-a-string-using-stack/1"},{"num":8,"text":"Design a Stack that supports getMin() in O(1) time and O(1) extra space.","url":"https://practice.geeksforgeeks.org/problems/special-stack/1"},{"num":9,"text":"Find the next Greater element","url":"https://practice.geeksforgeeks.org/problems/next-larger-element/0"},{"num":10,"text":"The celebrity Problem","url":"https://practice.geeksforgeeks.org/problems/the-celebrity-problem/1"},{"num":11,"text":"Arithmetic Expression evaluation","url":"https://www.geeksforgeeks.org/arithmetic-expression-evalution/"},{"num":12,"text":"Evaluation of Postfix expression \uea5e","url":"https://practice.geeksforgeeks.org/problems/evaluation-of-postfix-expression/0"},{"num":13,"text":"Implement a method to insert an element at its bottom without using any other data structure.","url":"https://stackoverflow.com/questions/45130465/inserting-at-the-end-of-stack"},{"num":14,"text":"Reverse a stack using recursion","url":"https://www.geeksforgeeks.org/reverse-a-stack-using-recursion/"},{"num":15,"text":"Sort a Stack using recursion","url":"https://practice.geeksforgeeks.org/problems/sort-a-stack/1"},{"num":16,"text":"Merge Overlapping Intervals","url":"https://practice.geeksforgeeks.org/problems/overlapping-intervals/0"},{"num":17,"text":"Largest rectangular Area in Histogram","url":"https://practice.geeksforgeeks.org/problems/maximum-rectangular-area-in-a-histogram/0"},{"num":18,"text":"Length of the Longest Valid Substring","url":"https://practice.geeksforgeeks.org/problems/valid-substring0624/1"},{"num":19,"text":"Expression contains redundant bracket or not","url":"https://www.geeksforgeeks.org/expression-contains-redundant-bracket-not/"},{"num":20,"text":"Implement Stack using Queue","url":"https://practice.geeksforgeeks.org/problems/stack-using-two-queues/1"},{"num":21,"text":"Implement Stack using Deque","url":"https://www.geeksforgeeks.org/implement-stack-queue-using-deque/"},{"num":22,"text":"Stack Permutations (Check if an array is stack permutation of other)","url":"https://www.geeksforgeeks.org/stack-permutations-check-if-an-array-is-stack-permutation-of-other/"},{"num":23,"text":"Implement Queue using Stack","url":"https://practice.geeksforgeeks.org/problems/queue-using-two-stacks/1"},{"num":24,"text":"Implement \"n\" queue in an array","url":"https://www.geeksforgeeks.org/efficiently-implement-k-queues-single-array/"},{"num":25,"text":"Implement a Circular queue","url":"https://www.geeksforgeeks.org/circular-queue-set-1-introduction-array-implementation/"},{"num":26,"text":"LRU Cache Implementationa","url":"https://practice.geeksforgeeks.org/problems/lru-cache/1"},{"num":27,"text":"Reverse a Queue using recursion","url":"https://practice.geeksforgeeks.org/problems/queue-reversal/1"},{"num":28,"text":"Reverse the first \u201cK\u201d elements of a queue","url":"https://practice.geeksforgeeks.org/problems/reverse-first-k-elements-of-queue/1"},{"num":29,"text":"Interleave the first half of the queue with second half","url":"https://www.geeksforgeeks.org/interleave-first-half-queue-second-half/"},{"num":30,"text":"Find the first circular tour that visits all Petrol Pumps","url":"https://practice.geeksforgeeks.org/problems/circular-tour/1"},{"num":31,"text":"Minimum time required to rot all oranges","url":"https://practice.geeksforgeeks.org/problems/rotten-oranges/0"},{"num":32,"text":"Distance of nearest cell having 1 in a binary matrix","url":"https://practice.geeksforgeeks.org/problems/distance-of-nearest-cell-having-1/0"},{"num":33,"text":"First negative integer in every window of size \u201ck\u201d","url":"https://practice.geeksforgeeks.org/problems/first-negative-integer-in-every-window-of-size-k/0"},{"num":34,"text":"Check if all levels of two trees are anagrams or not.","url":"https://www.geeksforgeeks.org/check-if-all-levels-of-two-trees-are-anagrams-or-not/"},{"num":35,"text":"Sum of minimum and maximum elements of all subarrays of size \u201ck\u201d.","url":"https://www.geeksforgeeks.org/sum-minimum-maximum-elements-subarrays-size-k/"},{"num":36,"text":"Minimum sum of squares of character counts in a given string after removing \u201ck\u201d characters.","url":"https://practice.geeksforgeeks.org/problems/game-with-string/0"},{"num":37,"text":"Queue based approach or first non-repeating character in a stream.","url":"https://practice.geeksforgeeks.org/problems/first-non-repeating-character-in-a-stream/0"},{"num":38,"text":"Next Smaller Element","url":"https://www.geeksforgeeks.org/next-smaller-element/"}],"String":[{"num":1,"text":"Reverse a String","url":"https://leetcode.com/problems/reverse-string/"},{"num":2,"text":"Check whether a String is Palindrome or not","url":"https://practice.geeksforgeeks.org/problems/palindrome-string0817/1"},{"num":3,"text":"Find Duplicate characters in a string","url":"https://www.geeksforgeeks.org/print-all-the-duplicates-in-the-input-string/"},{"num":4,"text":"Why strings are immutable in Java?","url":"https://www.baeldung.com/java-string-immutable"},{"num":5,"text":"Write a Code to check whether one string is a rotation of another","url":"https://www.geeksforgeeks.org/a-program-to-check-if-strings-are-rotations-of-each-other/"},{"num":6,"text":"Write a Program to check whether a string is a valid shuffle of two strings or not","url":"https://www.programiz.com/java-programming/examples/check-valid-shuffle-of-strings"},{"num":7,"text":"Count and Say problem","url":"https://leetcode.com/problems/count-and-say/"},{"num":8,"text":"Write a program to find the longest Palindrome in a string.[ Longest palindromic Substring]","url":"https://practice.geeksforgeeks.org/problems/longest-palindrome-in-a-string/0"},{"num":9,"text":"Find Longest Recurring Subsequence in String","url":"https://practice.geeksforgeeks.org/problems/longest-repeating-subsequence/0"},{"num":10,"text":"Print all Subsequences of a string.","url":"https://www.geeksforgeeks.org/print-subsequences-string/"},{"num":11,"text":"Print all the permutations of the given string","url":"https://practice.geeksforgeeks.org/problems/permutations-of-a-given-string/0"},{"num":12,"text":"Split the Binary string into two substring with equal 0\u2019s and 1\u2019s","url":"https://www.geeksforgeeks.org/split-the-binary-string-into-substrings-with-equal-number-of-0s-and-1s/"},{"num":13,"text":"Word Wrap Problem [VERY IMP].","url":"https://practice.geeksforgeeks.org/problems/word-wrap/0"},{"num":14,"text":"EDIT Distance [Very Imp]","url":"https://practice.geeksforgeeks.org/problems/edit-distance3702/1"},{"num":15,"text":"Find next greater number with same set of digits. [Very Very IMP]","url":"https://practice.geeksforgeeks.org/problems/next-permutation/0"},{"num":16,"text":"Balanced Parenthesis problem.[Imp]","url":"https://practice.geeksforgeeks.org/problems/parenthesis-checker/0"},{"num":17,"text":"Word break Problem[ Very Imp]","url":"https://practice.geeksforgeeks.org/problems/word-break/0"},{"num":18,"text":"Rabin Karp Algo","url":"https://www.geeksforgeeks.org/rabin-karp-algorithm-for-pattern-searching/"},{"num":19,"text":"KMP Algo","url":"https://practice.geeksforgeeks.org/problems/longest-prefix-suffix2527/1"},{"num":20,"text":"Convert a Sentence into its equivalent mobile numeric keypad sequence.","url":"https://www.geeksforgeeks.org/convert-sentence-equivalent-mobile-numeric-keypad-sequence/"},{"num":21,"text":"Minimum number of bracket reversals needed to make an expression balanced.","url":"https://practice.geeksforgeeks.org/problems/count-the-reversals/0"},{"num":22,"text":"Count All Palindromic Subsequence in a given String.","url":"https://practice.geeksforgeeks.org/problems/count-palindromic-subsequences/1"},{"num":23,"text":"Count of number of given string in 2D character array","url":"https://www.geeksforgeeks.org/find-count-number-given-string-present-2d-character-array/"},{"num":24,"text":"Search a Word in a 2D Grid of characters.","url":"https://practice.geeksforgeeks.org/problems/find-the-string-in-grid/0"},{"num":25,"text":"Boyer Moore Algorithm for Pattern Searching.","url":"https://www.geeksforgeeks.org/boyer-moore-algorithm-for-pattern-searching/"},{"num":26,"text":"Converting Roman Numerals to Decimal","url":"https://practice.geeksforgeeks.org/problems/roman-number-to-integer/0"},{"num":27,"text":"Longest Common Prefix","url":"https://leetcode.com/problems/longest-common-prefix/"},{"num":28,"text":"Number of flips to make binary string alternate","url":"https://practice.geeksforgeeks.org/problems/min-number-of-flips/0"},{"num":29,"text":"Find the first repeated word in string.","url":"https://practice.geeksforgeeks.org/problems/second-most-repeated-string-in-a-sequence/0"},{"num":30,"text":"Minimum number of swaps for bracket balancing.","url":"https://practice.geeksforgeeks.org/problems/minimum-swaps-for-bracket-balancing/0"},{"num":31,"text":"Find the longest common subsequence between two strings.","url":"https://practice.geeksforgeeks.org/problems/longest-common-subsequence/0"},{"num":32,"text":"Program to generate all possible valid IP addresses from given string.","url":"https://www.geeksforgeeks.org/program-generate-possible-valid-ip-addresses-given-string/"},{"num":33,"text":"Write a program to find the smallest window that contains all characters of string itself.","url":"https://practice.geeksforgeeks.org/problems/smallest-distant-window/0"},{"num":34,"text":"Rearrange characters in a string such that no two adjacent are same","url":"https://practice.geeksforgeeks.org/problems/rearrange-characters/0"},{"num":35,"text":"Minimum characters to be added at front to make string palindrome","url":"https://www.geeksforgeeks.org/minimum-characters-added-front-make-string-palindrome/"},{"num":36,"text":"Given a sequence of words, print all anagrams together","url":"https://practice.geeksforgeeks.org/problems/k-anagrams-1/0"},{"num":37,"text":"Find the smallest window in a string containing all characters of another string","url":"https://practice.geeksforgeeks.org/problems/smallest-window-in-a-string-containing-all-the-characters-of-another-string/0"},{"num":38,"text":"Recursively remove all adjacent duplicates","url":"https://practice.geeksforgeeks.org/problems/consecutive-elements/0"},{"num":39,"text":"String matching where one string contains wildcard characters","url":"https://practice.geeksforgeeks.org/problems/wildcard-string-matching/0"},{"num":40,"text":"Function to find Number of customers who could not get a computer","url":"https://www.geeksforgeeks.org/function-to-find-number-of-customers-who-could-not-get-a-computer/"},{"num":41,"text":"Transform One String to Another using Minimum Number of Given Operation \uea5e","url":"https://www.geeksforgeeks.org/transform-one-string-to-another-using-minimum-number-of-given-operation/"},{"num":42,"text":"Check if two given strings are isomorphic to each other","url":"https://practice.geeksforgeeks.org/problems/isomorphic-strings/0"},{"num":43,"text":"Recursively print all sentences that can be formed from list of word lists","url":"https://www.geeksforgeeks.org/recursively-print-all-sentences-that-can-be-formed-from-list-of-word-lists/"}],"Trie":[{"num":1,"text":"Construct a trie from scratch","url":"https://www.geeksforgeeks.org/trie-insert-and-search/"},{"num":2,"text":"Find shortest unique prefix for every word in a given list","url":"https://www.geeksforgeeks.org/find-all-shortest-unique-prefixes-to-represent-each-word-in-a-given-list/"},{"num":3,"text":"Word Break Problem | (Trie solution)","url":"https://www.geeksforgeeks.org/word-break-problem-trie-solution/"},{"num":4,"text":"Given a sequence of words, print all anagrams together","url":"https://practice.geeksforgeeks.org/problems/k-anagrams-1/0"},{"num":5,"text":"Implement a Phone Directory","url":"https://practice.geeksforgeeks.org/problems/phone-directory/0"},{"num":6,"text":"Print unique rows in a given boolean matrix","url":"https://practice.geeksforgeeks.org/problems/unique-rows-in-boolean-matrix/1"}]};
+
+const ICONS = {"Array": "\u26a1", "Backtracking": "\ud83d\udd04", "Binary Tree": "\ud83c\udf33", "Bitmanipulation": "\u2699\ufe0f", "BST": "\ud83c\udf32", "Dynamic Programming": "\ud83d\udc8e", "Graph": "\ud83d\udd78\ufe0f", "Greedy": "\ud83c\udfc6", "Heap": "\ud83d\udce6", "Linked List": "\ud83d\udd17", "Matrix": "\ud83e\uddee", "Search & Sort": "\ud83d\udd0d", "Stacks & Queue": "\ud83d\udcda", "String": "\u270d\ufe0f", "Trie": "\ud83c\udf34"};
+const COLORS = {"Array": "#f97316", "Backtracking": "#a855f7", "Binary Tree": "#22d3ee", "Bitmanipulation": "#facc15", "BST": "#4ade80", "Dynamic Programming": "#c084fc", "Graph": "#fb7185", "Greedy": "#fb923c", "Heap": "#34d399", "Linked List": "#60a5fa", "Matrix": "#f472b6", "Search & Sort": "#2dd4bf", "Stacks & Queue": "#a78bfa", "String": "#fbbf24", "Trie": "#86efac"};
+const TOPICS = Object.keys(DSA_DATA);
+const TOTAL = Object.values(DSA_DATA).reduce((a,b)=>a+b.length,0);
+
+// ── PERSISTENCE (localStorage with IndexedDB fallback) ────
+const DB_KEY = 'dsa_cracker_v2';
+let solved = new Set();
+let currentTopic = null; // null = overview
+let activeFilter = 'all';
+let searchQuery = '';
+let sidebarCollapsed = false;
+
+// Load state from localStorage
+function loadState() {
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (raw) {
+      const obj = JSON.parse(raw);
+      solved = new Set(obj.solved || []);
+      sidebarCollapsed = !!obj.sidebarCollapsed;
+    }
+  } catch(e) { console.warn('Load failed', e); }
+}
+
+// Save state to localStorage
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      const obj = { solved: [...solved], sidebarCollapsed, ts: Date.now() };
+      localStorage.setItem(DB_KEY, JSON.stringify(obj));
+      showToast();
+    } catch(e) { console.warn('Save failed', e); }
+  }, 300);
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ── KEYS ──────────────────────────────────────────────────
+function qKey(topic, num) { return topic + '|' + num; }
+
+// ── STATS ─────────────────────────────────────────────────
+function getTopicStats(topic) {
+  const qs = DSA_DATA[topic];
+  const done = qs.filter(q => solved.has(qKey(topic, q.num))).length;
+  return { total: qs.length, done, pct: Math.round(done/qs.length*100) };
+}
+
+function updateAllStats() {
+  const done = solved.size;
+  const pct = Math.round(done / TOTAL * 100);
+
+  document.getElementById('tb-done').textContent = done;
+  document.getElementById('tb-total').textContent = TOTAL;
+  document.getElementById('tb-pct').textContent = pct + '%';
+  document.getElementById('sp-fill').style.width = pct + '%';
+  document.getElementById('sp-done').textContent = done;
+  document.getElementById('sp-rem').textContent = TOTAL - done;
+
+  // Update nav badges
+  TOPICS.forEach(t => {
+    const s = getTopicStats(t);
+    const badge = document.getElementById('badge-' + t);
+    const ring = document.getElementById('ring-' + t);
+    if (badge) badge.textContent = s.done + '/' + s.total;
+    if (ring) ring.style.background = s.pct === 100 ? '#22c55e' : COLORS[t] || '#3b82f6';
+  });
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────
+function buildSidebarNav() {
+  const container = document.getElementById('topic-nav-items');
+  container.innerHTML = TOPICS.map(topic => {
+    const s = getTopicStats(topic);
+    const icon = ICONS[topic] || '📌';
+    const color = COLORS[topic] || '#6366f1';
+    return `<div class="nav-item" id="nav-${topic}" onclick="selectTopic('${topic}')">
+      <span class="nav-icon">${icon}</span>
+      <span class="nav-label">${topic}</span>
+      <span class="nav-badge" id="badge-${topic}">${s.done}/${s.total}</span>
+      <span class="nav-ring" id="ring-${topic}" style="background:${color};"></span>
+    </div>`;
+  }).join('');
+}
+
+function setActiveNav(id) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('active'); el.scrollIntoView({block:'nearest'}); }
+}
+
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('sidebar-toggle');
+  sb.classList.toggle('collapsed', sidebarCollapsed);
+  btn.textContent = sidebarCollapsed ? '▶' : '◀';
+  btn.style.left = sidebarCollapsed ? '51px' : 'calc(var(--sidebar-w) - 13px)';
+  saveState();
+}
+
+function toggleMobileSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+// ── DIFFICULTY HEURISTIC ──────────────────────────────────
+function getDiff(topic, num) {
+  const total = DSA_DATA[topic].length;
+  const third = Math.ceil(total / 3);
+  if (num <= third) return 'easy';
+  if (num <= third * 2) return 'med';
+  return 'hard';
+}
+
+// ── LINK HELPERS ─────────────────────────────────────────
+function linkClass(url) {
+  if (!url) return '';
+  if (url.includes('geeksforgeeks')) return 'gfg';
+  if (url.includes('leetcode')) return 'lc';
+  return '';
+}
+
+function linkLabel(url) {
+  if (!url) return '';
+  if (url.includes('geeksforgeeks')) return 'GFG ↗';
+  if (url.includes('leetcode')) return 'LC ↗';
+  return '↗';
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────
+function showOverview() {
+  currentTopic = null;
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  setActiveNav('nav-home');
+  closeMobileSidebar();
+
+  const done = solved.size;
+  const pct = Math.round(done / TOTAL * 100);
+
+  const cards = TOPICS.map(topic => {
+    const s = getTopicStats(topic);
+    const color = COLORS[topic] || '#6366f1';
+    const icon = ICONS[topic] || '📌';
+    return `<div class="ov-card" onclick="selectTopic('${topic}')" style="--c:${color}">
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,${color}08,${color}02);pointer-events:none;border-radius:var(--radius);"></div>
+      <div class="ov-icon">${icon}</div>
+      <div class="ov-name">${topic}</div>
+      <div class="ov-bar-track">
+        <div class="ov-bar-fill" style="width:${s.pct}%;background:${color};"></div>
+      </div>
+      <div class="ov-stat">
+        <span><span class="done-n" style="color:${color}">${s.done}</span>/${s.total}</span>
+        <span>${s.pct}%</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('content-area').innerHTML = `
+    <div class="section-header">
+      <div class="sh-icon" style="background:#3b82f620;font-size:26px">🧠</div>
+      <div class="sh-meta">
+        <div class="sh-title">Dashboard</div>
+        <div class="sh-desc">Love Babbar DSA Cracker — ${TOTAL} problems across ${TOPICS.length} topics</div>
+        <div class="sh-actions">
+          <button class="sh-btn danger" onclick="resetAll()">↺ Reset Progress</button>
+          <button class="sh-btn" onclick="exportProgress()">⬇ Export</button>
+          <button class="sh-btn" onclick="importProgress()">⬆ Import</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="big-stats">
+      <div class="big-stat total">
+        <span class="bs-val">${TOTAL}</span>
+        <div class="bs-label">Total Questions</div>
+      </div>
+      <div class="big-stat solved">
+        <span class="bs-val">${done}</span>
+        <div class="bs-label">Solved</div>
+      </div>
+      <div class="big-stat rem">
+        <span class="bs-val">${TOTAL - done}</span>
+        <div class="bs-label">Remaining</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;color:var(--muted2);margin-bottom:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em">All Topics</div>
+    <div class="overview-grid">${cards}</div>
+  `;
+}
+
+// ── TOPIC VIEW ────────────────────────────────────────────
+function selectTopic(topic) {
+  currentTopic = topic;
+  activeFilter = 'all';
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  setActiveNav('nav-' + topic);
+  closeMobileSidebar();
+  renderTopicView();
+}
+
+function renderTopicView() {
+  const topic = currentTopic;
+  if (!topic) return showOverview();
+
+  const qs = DSA_DATA[topic];
+  const color = COLORS[topic] || '#3b82f6';
+  const icon = ICONS[topic] || '📌';
+  const s = getTopicStats(topic);
+
+  let filtered = qs;
+  if (searchQuery) filtered = filtered.filter(q => q.text.toLowerCase().includes(searchQuery));
+  if (activeFilter === 'done') filtered = filtered.filter(q => solved.has(qKey(topic, q.num)));
+  if (activeFilter === 'todo') filtered = filtered.filter(q => !solved.has(qKey(topic, q.num)));
+
+  const rows = filtered.length === 0
+    ? `<div class="empty-qs"><h4>No questions match</h4><p>Try adjusting filters</p></div>`
+    : filtered.map((q, i) => {
+        const key = qKey(topic, q.num);
+        const isDone = solved.has(key);
+        const diff = getDiff(topic, q.num);
+        const diffLabel = diff === 'easy' ? 'Easy' : diff === 'med' ? 'Medium' : 'Hard';
+        const lc = linkClass(q.url);
+        const ll = linkLabel(q.url);
+        return `<div class="q-row${isDone ? ' done' : ''}" id="row-${key}" style="animation-delay:${i*0.018}s">
+          <div class="q-check${isDone ? ' checked' : ''}" onclick="toggleQ('${topic}','${q.num}',this)"></div>
+          <div class="q-num">${q.num}</div>
+          <div class="q-text">${q.text}</div>
+          <div class="q-diff"><span class="diff-tag diff-${diff}">${diffLabel}</span></div>
+          <div class="q-link-cell">${q.url ? `<a class="q-ext-link ${lc}" href="${q.url}" target="_blank" rel="noopener">${ll}</a>` : ''}</div>
+        </div>`;
+      }).join('');
+
+  document.getElementById('content-area').innerHTML = `
+    <div class="section-header">
+      <div class="sh-icon" style="background:${color}20">${icon}</div>
+      <div class="sh-meta">
+        <div class="sh-title">${topic}</div>
+        <div class="sh-desc" id="sh-desc-${topic}">${s.done} of ${s.total} solved · ${s.pct}% complete</div>
+        <div class="sh-actions">
+          <button class="sh-btn" onclick="markAllDone('${topic}')">✅ Mark All Done</button>
+          <button class="sh-btn danger" onclick="clearTopic('${topic}')">↺ Clear Topic</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-progress-bar">
+      <span class="tpb-label">Progress</span>
+      <div class="tpb-track">
+        <div class="tpb-fill" id="tpb-fill" style="width:${s.pct}%;background:${color};"></div>
+      </div>
+      <span class="tpb-pct" id="tpb-pct">${s.pct}%</span>
+      <span class="tpb-counts" id="tpb-counts">${s.done}/${s.total}</span>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-chip${activeFilter==='all'?' active':''}" onclick="setFilter('all')">All (${qs.length})</div>
+      <div class="filter-chip${activeFilter==='todo'?' active':''}" onclick="setFilter('todo')">⏳ Todo (${qs.filter(q=>!solved.has(qKey(topic,q.num))).length})</div>
+      <div class="filter-chip${activeFilter==='done'?' active':''}" onclick="setFilter('done')">✅ Done (${s.done})</div>
+    </div>
+
+    <div class="q-table">
+      <div class="q-table-header">
+        <div></div>
+        <div>#</div>
+        <div>Question</div>
+        <div style="text-align:center">Difficulty</div>
+        <div style="text-align:right">Link</div>
+      </div>
+      ${rows}
+    </div>
+  `;
+}
+
+// ── TOGGLE QUESTION ───────────────────────────────────────
+function toggleQ(topic, num, el) {
+  const key = qKey(topic, num);
+  const row = document.getElementById('row-' + key);
+  if (solved.has(key)) {
+    solved.delete(key);
+    el.classList.remove('checked');
+    row?.classList.remove('done');
+  } else {
+    solved.add(key);
+    el.classList.add('checked');
+    row?.classList.add('done');
+    spawnParticles(el, COLORS[topic] || '#3b82f6');
+  }
+  saveState();
+  updateAllStats();
+  updateTopicProgressInline();
+  if (activeFilter !== 'all') setTimeout(renderTopicView, 350);
+}
+
+function updateTopicProgressInline() {
+  if (!currentTopic) return;
+  const s = getTopicStats(currentTopic);
+  const fill = document.getElementById('tpb-fill');
+  const pct = document.getElementById('tpb-pct');
+  const counts = document.getElementById('tpb-counts');
+  const desc = document.getElementById('sh-desc-' + currentTopic);
+  if (fill) fill.style.width = s.pct + '%';
+  if (pct) pct.textContent = s.pct + '%';
+  if (counts) counts.textContent = s.done + '/' + s.total;
+  if (desc) desc.textContent = s.done + ' of ' + s.total + ' solved · ' + s.pct + '% complete';
+}
+
+// ── FILTERS ───────────────────────────────────────────────
+function setFilter(f) {
+  activeFilter = f;
+  renderTopicView();
+}
+
+function onSearch(val) {
+  searchQuery = val.toLowerCase();
+  if (currentTopic) renderTopicView();
+  else showOverview();
+}
+
+// ── BULK ACTIONS ──────────────────────────────────────────
+function markAllDone(topic) {
+  DSA_DATA[topic].forEach(q => solved.add(qKey(topic, q.num)));
+  saveState(); updateAllStats(); renderTopicView();
+}
+
+function clearTopic(topic) {
+  if (!confirm('Clear all progress for ' + topic + '?')) return;
+  DSA_DATA[topic].forEach(q => solved.delete(qKey(topic, q.num)));
+  saveState(); updateAllStats(); renderTopicView();
+}
+
+function resetAll() {
+  if (!confirm('Reset ALL progress? This cannot be undone.')) return;
+  solved.clear();
+  saveState(); updateAllStats(); showOverview();
+}
+
+// ── EXPORT / IMPORT ───────────────────────────────────────
+function exportProgress() {
+  const data = JSON.stringify({ solved: [...solved], ts: Date.now() }, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dsa-progress-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importProgress() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const obj = JSON.parse(ev.target.result);
+        if (Array.isArray(obj.solved)) {
+          solved = new Set(obj.solved);
+          saveState(); updateAllStats(); showOverview();
+          alert('✅ Progress imported!');
+        }
+      } catch(err) { alert('Invalid file'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ── PARTICLES ─────────────────────────────────────────────
+function spawnParticles(el, color) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  const palette = [color, '#22c55e', '#f59e0b', '#60a5fa', '#c084fc'];
+  for (let i = 0; i < 10; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = 5 + Math.random()*7;
+    const ang = (Math.PI*2*i/10) + Math.random()*0.6;
+    const dist = 35 + Math.random()*45;
+    p.style.cssText = `left:${cx-sz/2}px;top:${cy-sz/2}px;
+      width:${sz}px;height:${sz}px;
+      background:${palette[i%palette.length]};
+      --tx:${Math.cos(ang)*dist}px;
+      --ty:${Math.sin(ang)*dist - 20}px;
+      --r:${Math.random()*360}deg;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 900);
+  }
+}
+
+// ── CLOSE MOBILE SIDEBAR ──────────────────────────────────
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+}
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('search-input').focus();
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('search-input').blur();
+    closeMobileSidebar();
+  }
+});
+
+// ── INIT ─────────────────────────────────────────────────
+loadState();
+buildSidebarNav();
+if (sidebarCollapsed) {
+  document.getElementById('sidebar').classList.add('collapsed');
+  document.getElementById('sidebar-toggle').textContent = '▶';
+  document.getElementById('sidebar-toggle').style.left = '51px';
+}
+updateAllStats();
+showOverview();
+</script>
+</body>
+</html>
