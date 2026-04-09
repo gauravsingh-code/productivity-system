@@ -901,9 +901,7 @@ body {
 
   <!-- MAIN -->
   <main class="main" id="main-panel">
-    <div class="content-area" id="content-area">
-      <!-- injected by JS -->
-    </div>
+    <div class="content-area" id="content-area"></div>
   </main>
 </div>
 
@@ -990,6 +988,19 @@ function updateAllStats() {
 }
 
 // ── SIDEBAR ───────────────────────────────────────────────
+// Add Notes tab to sidebar
+function addNotesTab() {
+  const sidebar = document.getElementById('sidebar-nav');
+  if (!document.getElementById('nav-notes')) {
+    const notesTab = document.createElement('div');
+    notesTab.className = 'nav-item';
+    notesTab.id = 'nav-notes';
+    notesTab.innerHTML = '<span class="nav-icon">🗒️</span><span class="nav-label">Notes</span>';
+    notesTab.setAttribute('onclick', 'showAllNotes()');
+    sidebar.appendChild(notesTab);
+  }
+}
+
 function buildSidebarNav() {
   const container = document.getElementById('topic-nav-items');
   container.innerHTML = TOPICS.map(topic => {
@@ -1003,6 +1014,7 @@ function buildSidebarNav() {
       <span class="nav-ring" id="ring-${topic}" style="background:${color};"></span>
     </div>`;
   }).join('');
+  addNotesTab();
 }
 
 function setActiveNav(id) {
@@ -1146,14 +1158,185 @@ function renderTopicView() {
         const diffLabel = diff === 'easy' ? 'Easy' : diff === 'med' ? 'Medium' : 'Hard';
         const lc = linkClass(q.url);
         const ll = linkLabel(q.url);
+        const noteExists = !!localStorage.getItem(noteKey(topic, q.num));
         return `<div class="q-row${isDone ? ' done' : ''}" id="row-${key}" style="animation-delay:${i*0.018}s">
           <div class="q-check${isDone ? ' checked' : ''}" onclick="toggleQ('${topic}','${q.num}',this)"></div>
           <div class="q-num">${q.num}</div>
           <div class="q-text">${q.text}</div>
           <div class="q-diff"><span class="diff-tag diff-${diff}">${diffLabel}</span></div>
-          <div class="q-link-cell">${q.url ? `<a class="q-ext-link ${lc}" href="${q.url}" target="_blank" rel="noopener">${ll}</a>` : ''}</div>
+          <div class="q-link-cell" style="display:flex;gap:6px;justify-content:flex-end;align-items:center;">
+            <button class="note-btn" title="${noteExists ? 'View Note' : 'Add Note'}" onclick="openNoteModal(event, '${topic}', '${q.num}', '${encodeURIComponent(q.text)}')">${noteExists ? '👁️' : '📝'}</button>
+            ${q.url ? `<a class="q-ext-link ${lc}" href="${q.url}" target="_blank" rel="noopener">${ll}</a>` : ''}
+          </div>
         </div>`;
       }).join('');
+// ── NOTES FEATURE ──────────────────────────────────────────
+
+function showAllNotes() {
+  setActiveNav('nav-notes');
+  let notes = [];
+  for (let i = 0; i < localStorage.length; ++i) {
+    const k = localStorage.key(i);
+    if (k.startsWith('note|')) {
+      const [_, topic, num] = k.split('|');
+      const q = (DSA_DATA[topic]||[]).find(q=>String(q.num)===num);
+      if (q) notes.push({topic, num, text: q.text, note: localStorage.getItem(k)});
+    }
+  }
+  notes.sort((a,b)=>a.topic.localeCompare(b.topic)||a.num-b.num);
+  const rows = notes.length === 0
+    ? '<div class="empty-qs"><h4>No notes added yet</h4></div>'
+    : notes.map(n => `
+      <div class="q-row" style="grid-template-columns: 1fr 3fr;">
+        <div style="font-weight:600;color:var(--accent2);padding:8px 0 8px 8px;">${n.topic} #${n.num}</div>
+        <div style="padding:8px 0 8px 8px;position:relative;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:4px;">${n.text}</div>
+          <div style="background:var(--surface);border-radius:6px;padding:8px 10px 8px 10px;color:var(--muted2);font-size:13px;white-space:pre-wrap;">${n.note}</div>
+          <button class="sh-btn danger" style="position:absolute;top:8px;right:8px;font-size:11px;padding:3px 8px;" onclick="deleteNote('${n.topic}','${n.num}')">🗑 Delete</button>
+        </div>
+      </div>
+    `).join('');
+  document.getElementById('content-area').innerHTML = `
+    <div class="section-header">
+      <div class="sh-icon" style="background:#60a5fa20">🗒️</div>
+      <div class="sh-meta">
+        <div class="sh-title">All Notes</div>
+        <div class="sh-desc">View, download, or import all your notes</div>
+        <div class="sh-actions">
+          <button class="sh-btn" onclick="downloadNotes()">⬇ Download Notes</button>
+          <button class="sh-btn" onclick="importNotes()">⬆ Import Notes</button>
+        </div>
+      </div>
+    </div>
+    <div class="q-table">${rows}</div>
+  `;
+}
+
+function downloadNotes() {
+  let notes = [];
+  for (let i = 0; i < localStorage.length; ++i) {
+    const k = localStorage.key(i);
+    if (k.startsWith('note|')) {
+      notes.push({key: k, value: localStorage.getItem(k)});
+    }
+  }
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dsa-notes.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);}, 100);
+}
+window.downloadNotes = downloadNotes;
+
+function deleteNote(topic, num) {
+  if (confirm('Delete this note?')) {
+    localStorage.removeItem(noteKey(topic, num));
+    showAllNotes();
+    showToastMsg('🗑 Note deleted!');
+  }
+}
+window.deleteNote = deleteNote;
+
+function importNotes() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const text = evt.target.result;
+        if (!text || text.trim() === '' || text.trim() === '[]') {
+          alert('File is empty or contains no notes.');
+          return;
+        }
+        const arr = JSON.parse(text);
+        if (Array.isArray(arr) && arr.length > 0) {
+          let imported = 0;
+          arr.forEach(obj => {
+            if (obj.key && obj.key.startsWith('note|')) {
+              localStorage.setItem(obj.key, obj.value);
+              imported++;
+            }
+          });
+          showAllNotes();
+          showToastMsg(`✅ Imported ${imported} notes!`);
+        } else {
+          alert('No notes found in file.');
+        }
+      } catch(e) { alert('Invalid notes file.'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+window.importNotes = importNotes;
+function noteKey(topic, num) { return `note|${topic}|${num}`; }
+
+function openNoteModal(e, topic, num, qtext) {
+  e.stopPropagation();
+  let modal = document.getElementById('note-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'note-modal';
+    modal.innerHTML = `
+      <div class="note-modal-backdrop" onclick="window.closeNoteModal()"></div>
+      <div class="note-modal-content">
+        <div class="note-modal-header">
+          <span class="note-modal-title">📝 Notes for: <span id="note-modal-q"></span></span>
+          <button class="note-modal-close" onclick="window.closeNoteModal()">&times;</button>
+        </div>
+        <textarea id="note-modal-text" placeholder="Write your notes or tips here..."></textarea>
+        <div class="note-modal-actions" style="display:flex;gap:8px;">
+          <button onclick="window.saveNote()" class="note-modal-save">💾 Save</button>
+          <button onclick="window.deleteNote('${topic}','${num}')" class="note-modal-save" style="background:#ef444410;border-color:#ef4444;color:#ef4444;">🗑 Delete</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('note-modal-q').textContent = decodeURIComponent(qtext);
+  document.getElementById('note-modal-text').value = localStorage.getItem(noteKey(topic, num)) || '';
+  modal.setAttribute('data-topic', topic);
+  modal.setAttribute('data-num', num);
+}
+window.openNoteModal = openNoteModal;
+
+function closeNoteModal() {
+  const modal = document.getElementById('note-modal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+window.closeNoteModal = closeNoteModal;
+
+function saveNote() {
+  const modal = document.getElementById('note-modal');
+  if (!modal) return;
+  const topic = modal.getAttribute('data-topic');
+  const num = modal.getAttribute('data-num');
+  const val = document.getElementById('note-modal-text').value;
+  localStorage.setItem(noteKey(topic, num), val);
+  closeNoteModal();
+  showToastMsg('📝 Note saved!');
+}
+window.saveNote = saveNote;
+
+function showToastMsg(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => {
+    t.classList.remove('show');
+    t.textContent = '💾 Progress saved';
+  }, 1800);
+}
 
   document.getElementById('content-area').innerHTML = `
     <div class="section-header">
@@ -1332,15 +1515,65 @@ document.addEventListener('keydown', e => {
 });
 
 // ── INIT ─────────────────────────────────────────────────
-loadState();
-buildSidebarNav();
-if (sidebarCollapsed) {
-  document.getElementById('sidebar').classList.add('collapsed');
-  document.getElementById('sidebar-toggle').textContent = '▶';
-  document.getElementById('sidebar-toggle').style.left = '51px';
-}
-updateAllStats();
-showOverview();
+document.addEventListener('DOMContentLoaded', function() {
+  loadState();
+  buildSidebarNav();
+  if (sidebarCollapsed) {
+    document.getElementById('sidebar').classList.add('collapsed');
+    document.getElementById('sidebar-toggle').textContent = '▶';
+    document.getElementById('sidebar-toggle').style.left = '51px';
+  }
+  updateAllStats();
+  showOverview();
+});
+// ── NOTES MODAL STYLES ─────────────────────────────────────
 </script>
+<style>
+.note-btn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--accent2);
+  transition: background 0.18s, border-color 0.18s;
+}
+.note-btn:hover { background: var(--accent2); color: #fff; border-color: var(--accent); }
+.note-modal-backdrop {
+  position: fixed; inset: 0; background: #0008; z-index: 9998;
+}
+.note-modal-content {
+  position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  background: var(--card); color: var(--text);
+  border-radius: 12px; box-shadow: 0 8px 32px #00000050;
+  z-index: 9999; min-width: 340px; max-width: 96vw;
+  padding: 24px 24px 18px 24px;
+  display: flex; flex-direction: column;
+}
+.note-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.note-modal-title { font-size: 15px; font-weight: 700; }
+.note-modal-close {
+  background: none; border: none; font-size: 22px; color: var(--muted2); cursor: pointer;
+}
+#note-modal-text {
+  width: 100%; min-height: 90px; max-height: 220px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border2); border-radius: 8px;
+  font-size: 13px; font-family: var(--sans);
+  margin-bottom: 14px; padding: 10px 12px;
+  resize: vertical;
+}
+.note-modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.note-modal-save {
+  background: var(--accent2); color: #fff; border: none;
+  border-radius: 6px; padding: 7px 18px; font-size: 13px; cursor: pointer;
+  font-family: var(--mono);
+}
+.note-modal-save:hover { background: var(--accent); }
+</style>
 </body>
 </html>
